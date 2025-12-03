@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using BoatAdminApi.Enums;
 
 namespace BoatAdminApi.Models
@@ -54,7 +55,7 @@ namespace BoatAdminApi.Models
 
         public bool AllStates { get; set; }
         [MaxLength(5)]
-        public string? ClassCode { get; set; }
+        public string? ClassCode { get; set; } // Just a property, not FK
         public BoatStatus Status { get; set; }
         public int? CommonMakeId { get; set; }
 
@@ -80,8 +81,9 @@ namespace BoatAdminApi.Models
         public DateTime? LastModified { get; set; }
 
         // Navigation properties
-        public VehicleClass? Class { get; set; }
         public City? City { get; set; }
+        [NotMapped]
+        public VehicleClass? Class { get; set; }
         public ICollection<BoatPhoto>? Photos { get; set; }
         public ICollection<BoatVideo>? Videos { get; set; }
     }
