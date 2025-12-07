@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using BoatAdminApi.Enums;
 
 namespace BoatAdminApi.Models
@@ -55,7 +56,10 @@ namespace BoatAdminApi.Models
 
         public bool AllStates { get; set; }
         [MaxLength(5)]
-        public string? ClassCode { get; set; } // Just a property, not FK
+        public string? ClassCode { get; set; }
+        [NotMapped]
+        public string? Class => VehicleClass?.Name;
+        
         public BoatStatus Status { get; set; }
         public int? CommonMakeId { get; set; }
 
@@ -82,9 +86,11 @@ namespace BoatAdminApi.Models
 
         // Navigation properties
         public City? City { get; set; }
-        [NotMapped]
-        public VehicleClass? Class { get; set; }
+        [JsonIgnore] 
+        public VehicleClass? VehicleClass { get; set; }
+        [JsonIgnore] 
         public ICollection<BoatPhoto>? Photos { get; set; }
+        [JsonIgnore] 
         public ICollection<BoatVideo>? Videos { get; set; }
     }
 }

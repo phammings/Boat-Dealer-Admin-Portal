@@ -56,6 +56,15 @@ namespace BoatAdminApi.Data
                 .HasForeignKey(bv => bv.Boat_VehicleID)
                 .HasConstraintName("FK_dbo.BoatVideo_dbo.BoatSale_Boat_VehicleID");
 
+            
+            modelBuilder.Entity<BoatSale>()
+                .HasOne(bs => bs.VehicleClass)
+                .WithMany(vc => vc.BoatSales)
+                .HasPrincipalKey(vc => vc.Code)     
+                .HasForeignKey(bs => bs.ClassCode) 
+                .HasConstraintName("FK_BoatSale_VehicleClass")
+                .IsRequired(false); 
+
 
             // Store enums as strings in the database
             modelBuilder.Entity<BoatSale>()

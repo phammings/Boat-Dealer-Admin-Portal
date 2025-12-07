@@ -1,0 +1,84 @@
+using Microsoft.AspNetCore.Mvc;
+using BoatAdminApi.Models;
+using BoatAdminApi.Services;
+using BoatAdminApi.DTOs;
+using BoatAdminApi.Helpers;
+
+namespace BoatAdminApi.Controllers
+{
+    [ApiController]
+    [Route("api/boats")]
+    public class BoatController : ControllerBase
+    {
+        private readonly IBoatService _service;
+
+        public BoatController(IBoatService service)
+        {
+            _service = service;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BoatListDto>>> GetBoats()
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            var boats = await _service.GetBoatsAsync(dealerId);
+            return Ok(boats);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BoatSale>> GetBoat(int id)
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            var boat = await _service.GetBoatAsync(dealerId, id);
+            if (boat == null) return NotFound();
+
+            return Ok(boat);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<BoatSale>> CreateBoat(BoatSale boat)
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            var created = await _service.CreateBoatAsync(dealerId, boat);
+            return CreatedAtAction(nameof(GetBoat), new { id = created.BoatID }, created);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBoat(int id, BoatSale boat)
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            if (id != boat.BoatID) return BadRequest();
+
+            await _service.UpdateBoatAsync(dealerId, boat);
+            return NoContent();
+        }
+
+        [HttpPatch("{id}/deactivate")]
+        public async Task<IActionResult> DeactivateBoat(int id)
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            await _service.SetActiveStatusAsync(dealerId, id, false);
+            return NoContent();
+        }
+
+        [HttpPatch("{id}/reactivate")]
+        public async Task<IActionResult> ReactivateBoat(int id)
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            await _service.SetActiveStatusAsync(dealerId, id, true);
+            return NoContent();
+        }
+    }
+}
