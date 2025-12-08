@@ -39,7 +39,7 @@ namespace BoatAdminApi.Enums
 
     public enum FuelType
     {
-        NA,
+        None,
         Gas,
         Diesel,
         Electric

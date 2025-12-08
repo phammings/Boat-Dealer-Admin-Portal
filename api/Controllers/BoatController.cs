@@ -40,14 +40,15 @@ namespace BoatAdminApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BoatSale>> CreateBoat(BoatSale boat)
+        public async Task<ActionResult<BoatSale>> CreateBoat(BoatCreateDTO req)
         {
             int dealerId = DealerHelper.GetDealerId(Request);
             if (dealerId == 0) return Unauthorized();
 
-            var created = await _service.CreateBoatAsync(dealerId, boat);
+            var created = await _service.CreateBoatAsync(dealerId, req);
             return CreatedAtAction(nameof(GetBoat), new { id = created.BoatID }, created);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBoat(int id, BoatSale boat)

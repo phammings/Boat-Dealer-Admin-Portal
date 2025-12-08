@@ -19,6 +19,8 @@ namespace BoatAdminApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<BoatSale>().ToTable(tb => tb.UseSqlOutputClause(false));
+
             // Table names
             modelBuilder.Entity<BoatSale>().ToTable("BoatSale");
             modelBuilder.Entity<BoatPhoto>().ToTable("BoatPhoto");
@@ -88,6 +90,15 @@ namespace BoatAdminApi.Data
                     v => v != null ? (Enums.FuelType)Enum.Parse(typeof(Enums.FuelType), v) : (Enums.FuelType?)null
                 );
 
+            modelBuilder.Entity<BoatSale>()
+                .Property(b => b.PriceType)
+                .ValueGeneratedOnAddOrUpdate()
+                .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+            modelBuilder.Entity<BoatSale>()
+                .Property(b => b.SearchPrice)
+                .ValueGeneratedOnAddOrUpdate()
+                .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
             // Status is already int in DB, keep as is
             modelBuilder.Entity<BoatSale>()
