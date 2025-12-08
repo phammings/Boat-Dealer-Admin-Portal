@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore;
 using BoatAdminApi.Models;
 
@@ -99,6 +100,16 @@ namespace BoatAdminApi.Data
                 .Property(b => b.SearchPrice)
                 .ValueGeneratedOnAddOrUpdate()
                 .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+            var fuelConverter = new ValueConverter<Enums.FuelType?, string>(
+                v => v.HasValue ? (v.Value == Enums.FuelType.None ? "N/A" : v.Value.ToString()) : "N/A",  // write to DB
+                v => string.IsNullOrEmpty(v) || v == "N/A" ? Enums.FuelType.None : Enum.Parse<Enums.FuelType>(v)  // read from DB
+            );
+
+            modelBuilder.Entity<BoatSale>()
+                .Property(bs => bs.FuelType)
+                .HasConversion(fuelConverter);
+
 
             // Status is already int in DB, keep as is
             modelBuilder.Entity<BoatSale>()
