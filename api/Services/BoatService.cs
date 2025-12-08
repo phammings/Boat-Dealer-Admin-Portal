@@ -66,9 +66,37 @@ namespace BoatAdminApi.Services
         }
 
 
-        public Task UpdateBoatAsync(int dealerId, BoatSale boat)
+        public async Task UpdateBoatAsync(int dealerId, BoatEditDTO req)
         {
-            return _repo.UpdateBoatAsync(boat);
+            var boat = await _repo.GetBoatByIdAsync(dealerId, req.BoatID);
+            if (boat == null)
+                throw new Exception("Boat not found");
+
+            boat.BoatType = req.BoatType;
+            boat.ClassCode = req.ClassCode;
+            boat.Make = req.Make;
+            boat.Model = req.Model;
+            boat.BoatYear = req.BoatYear;
+            boat.Price = req.Price;
+            boat.PriceType = req.PriceType ?? 0;
+            boat.Length = req.Length;
+            boat.BeamFt = req.BeamFt;
+            boat.DraftFt = req.DraftFt;
+            boat.Weight = req.Weight;
+            boat.Engine = req.Engine;
+            boat.NumEngines = req.NumEngines;
+            boat.HP = req.HP;
+            boat.Drive = req.Drive != null ? Enum.Parse<Enums.DriveType>(req.Drive) : null;
+            boat.Hours = req.Hours;
+            boat.FuelType = req.FuelType != null
+                ? (req.FuelType == "N/A" ? FuelType.None : Enum.Parse<FuelType>(req.FuelType))
+                : null;
+            boat.Description = req.Description;
+            boat.CityID = req.CityID;
+
+            boat.LastModified = DateTime.UtcNow;
+
+            await _repo.UpdateBoatAsync(boat);
         }
 
         public Task SetActiveStatusAsync(int dealerId, int boatId, bool active)

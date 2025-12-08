@@ -51,14 +51,14 @@ namespace BoatAdminApi.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBoat(int id, BoatSale boat)
+        public async Task<IActionResult> UpdateBoat(int id, BoatEditDTO req)
         {
             int dealerId = DealerHelper.GetDealerId(Request);
             if (dealerId == 0) return Unauthorized();
 
-            if (id != boat.BoatID) return BadRequest();
+            req.BoatID = id;
 
-            await _service.UpdateBoatAsync(dealerId, boat);
+            await _service.UpdateBoatAsync(dealerId, req);
             return NoContent();
         }
 

@@ -7,8 +7,8 @@ namespace BoatAdminApi.Services
     {
         Task<IEnumerable<BoatListDto>> GetBoatsAsync(int dealerId);
         Task<BoatSale?> GetBoatAsync(int dealerId, int boatId);
-        Task<BoatSale> CreateBoatAsync(int dealerId, BoatCreateDTO boatDto);
-        Task UpdateBoatAsync(int dealerId, BoatSale boat);
+        Task<BoatSale> CreateBoatAsync(int dealerId, BoatCreateDTO req);
+        Task UpdateBoatAsync(int dealerId, BoatEditDTO req);
         Task SetActiveStatusAsync(int dealerId, int boatId, bool active);
     }
 }
