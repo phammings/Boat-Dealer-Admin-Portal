@@ -35,7 +35,7 @@ namespace BoatAdminApi.Services
             var boat = new BoatSale
             {
                 SellerID = dealerId,
-                Status = (Enums.BoatStatus)req.Status,
+                Status = (BoatStatus)req.Status,
                 BoatType = req.BoatType,
                 ClassCode = req.ClassCode,
                 Make = req.Make,

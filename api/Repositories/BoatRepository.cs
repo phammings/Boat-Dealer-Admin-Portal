@@ -64,12 +64,16 @@ namespace BoatAdminApi.Repositories
 
         public async Task SetActiveStatusAsync(int dealerId, int boatId, bool active)
         {
-            var boat = await GetBoatByIdAsync(dealerId, boatId);
-            if (boat != null)
-            {
-                boat.Active = active;
-                await _context.SaveChangesAsync();
-            }
+            var boat = await _context.BoatSales
+                .FirstOrDefaultAsync(b => b.BoatID == boatId && b.SellerID == dealerId);
+
+            if (boat == null)
+                throw new KeyNotFoundException($"Boat with ID {boatId} not found for dealer {dealerId}.");
+
+            boat.Active = active;
+            boat.LastModified = DateTime.UtcNow; 
+            await _context.SaveChangesAsync();
         }
+        
     }
 }

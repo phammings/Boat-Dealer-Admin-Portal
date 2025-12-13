@@ -62,24 +62,22 @@ namespace BoatAdminApi.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id}/deactivate")]
-        public async Task<IActionResult> DeactivateBoat(int id)
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> UpdateBoatStatus(int id, [FromQuery] bool active)
         {
             int dealerId = DealerHelper.GetDealerId(Request);
             if (dealerId == 0) return Unauthorized();
 
-            await _service.SetActiveStatusAsync(dealerId, id, false);
-            return NoContent();
+            try
+            {
+                await _service.SetActiveStatusAsync(dealerId, id, active);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-        [HttpPatch("{id}/reactivate")]
-        public async Task<IActionResult> ReactivateBoat(int id)
-        {
-            int dealerId = DealerHelper.GetDealerId(Request);
-            if (dealerId == 0) return Unauthorized();
-
-            await _service.SetActiveStatusAsync(dealerId, id, true);
-            return NoContent();
-        }
     }
 }
