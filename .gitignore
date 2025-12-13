@@ -1,4 +1,5 @@
 Boat-Dealer-Admin-Portal.sln
 appsettings.Development.json
+Properties/
 bin/
 obj/

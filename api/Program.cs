@@ -1,3 +1,4 @@
+using Amazon.S3;
 using BoatAdminApi.Data;
 using BoatAdminApi.Repositories;
 using BoatAdminApi.Services;
@@ -5,24 +6,59 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ----------------------------
+// Controllers
+// ----------------------------
 builder.Services.AddControllers();
 
-// Register EF Core DbContext
+// ----------------------------
+// EF Core
+// ----------------------------
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register your repository and service for dependency injection
+// ----------------------------
+// AWS S3
+// ----------------------------
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+
+// ----------------------------
+// Dependency Injection
+// ----------------------------
 builder.Services.AddScoped<IBoatRepository, BoatRepository>();
 builder.Services.AddScoped<IBoatService, BoatService>();
 
-// Add Swagger/OpenAPI
+builder.Services.AddScoped<IStorageRepository, S3StorageRepository>();
+builder.Services.AddScoped<IBoatPhotoRepository, BoatPhotoRepository>();
+builder.Services.AddScoped<IBoatPhotoService, BoatPhotoService>();
+
+// ----------------------------
+// CORS (Frontend uploads)
+// ----------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("https://yourfrontend.com")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// ----------------------------
+// Swagger
+// ----------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ----------------------------
+// Middleware
+// ----------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,6 +66,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("FrontendPolicy");
+
 app.UseAuthorization();
 
 app.MapControllers();

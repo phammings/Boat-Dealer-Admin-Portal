@@ -111,6 +111,43 @@ namespace BoatAdminApi.Data
                 .HasConversion(fuelConverter);
 
 
+            modelBuilder.Entity<BoatPhoto>(entity =>
+            {
+                entity.HasKey(bp => bp.BoatPhotoID);
+
+                // Map C# PhotoKey → DB BoatPhoto
+                entity.Property(bp => bp.PhotoKey)
+                    .HasColumnName("BoatPhoto")
+                    .HasMaxLength(255)
+                    .IsRequired();
+
+                entity.Property(bp => bp.PhotoTitle)
+                    .HasMaxLength(100);
+
+                entity.Property(bp => bp.PhotoDescription)
+                    .HasMaxLength(255);
+
+                entity.Property(bp => bp.PhotoURL)
+                    .HasMaxLength(255);
+
+                entity.Property(bp => bp.IsPrimary)
+                    .IsRequired();
+
+                entity.Property(bp => bp.Processed)
+                    .IsRequired();
+
+                entity.Property(bp => bp.Active)
+                    .IsRequired();
+
+                entity.Property(bp => bp.Hide)
+                    .IsRequired();
+
+                entity.Property(bp => bp.Valid)
+                    .IsRequired();
+
+            });
+
+
             // Status is already int in DB, keep as is
             modelBuilder.Entity<BoatSale>()
                 .Property(bs => bs.Status)
