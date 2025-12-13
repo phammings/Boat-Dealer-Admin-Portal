@@ -1,15 +1,14 @@
 using BoatAdminApi.Models;
-using BoatAdminApi.DTOs;
 
-namespace BoatAdminApi.Repositories
+public interface IBoatPhotoRepository
 {
-    public interface IBoatPhotoRepository
-    {
-        BoatPhoto CreatePendingPhoto(
-            int boatId,
-            string fileKey,
-            bool isPrimary
-        );
-        void MarkUploaded(int boatPhotoId, string photoUrl);
-    }
+    BoatPhoto CreatePendingPhoto(int boatId, string key, bool isPrimary);
+
+    Task<BoatPhoto?> GetAsync(int photoId);
+
+    Task<IEnumerable<BoatPhoto>> GetByBoatIdAsync(int boatId);
+
+    Task UpdateAsync(BoatPhoto photo);
+
+    Task DeleteAsync(BoatPhoto photo);
 }
