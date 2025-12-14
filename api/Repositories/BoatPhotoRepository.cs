@@ -11,12 +11,12 @@ public class BoatPhotoRepository : IBoatPhotoRepository
         _context = context;
     }
 
-    public BoatPhoto CreatePendingPhoto(int boatId, string key, bool isPrimary)
+    public BoatPhoto CreatePendingPhoto(int boatId, string? s3Key, bool isPrimary)
     {
         var photo = new BoatPhoto
         {
             BoatID = boatId,
-            PhotoKey = key,
+            PhotoURL = s3Key,   // nullable
             IsPrimary = isPrimary,
             Processed = false,
             Active = true,
@@ -30,6 +30,7 @@ public class BoatPhotoRepository : IBoatPhotoRepository
         return photo;
     }
 
+
     public async Task<BoatPhoto?> GetAsync(int photoId)
     {
         return await _context.BoatPhotos
@@ -39,7 +40,10 @@ public class BoatPhotoRepository : IBoatPhotoRepository
     public async Task<IEnumerable<BoatPhoto>> GetByBoatIdAsync(int boatId)
     {
         return await _context.BoatPhotos
-            .Where(p => p.BoatID == boatId && p.Active && !p.Hide)
+            .Where(p =>
+                p.BoatID == boatId &&
+                p.Active &&
+                !p.Hide)
             .ToListAsync();
     }
 

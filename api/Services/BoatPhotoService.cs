@@ -19,19 +19,30 @@ public class BoatPhotoService : IBoatPhotoService
         if (!dto.ContentType.StartsWith("image/"))
             throw new InvalidOperationException("Invalid file type");
 
-        var key = $"boats/{dto.BoatID}/{Guid.NewGuid()}-{dto.FileName}";
+        var photo = _repo.CreatePendingPhoto(
+            dto.BoatID,
+            null,               // PhotoURL empty for now
+            dto.IsPrimary
+        );
 
-        var photo = _repo.CreatePendingPhoto(dto.BoatID, key, dto.IsPrimary);
+        var key = $"{dto.BoatID}/{photo.BoatPhotoID}/{dto.FileName}";
 
-        var uploadUrl = _storage.GeneratePresignedUrl(key, dto.ContentType);
+        photo.PhotoURL = key;
+        _repo.UpdateAsync(photo).Wait();
+
+        var uploadUrl = _storage.GeneratePresignedUrl(
+            key,
+            dto.ContentType
+        );
 
         return new BoatPhotoUploadResponseDto
         {
-            UploadUrl = uploadUrl,
             BoatPhotoID = photo.BoatPhotoID,
+            UploadUrl = uploadUrl,
             FileKey = key
         };
     }
+
 
     public async Task<IEnumerable<BoatPhotoDto>> GetPhotosByBoatIdAsync(int boatId)
     {
@@ -42,11 +53,21 @@ public class BoatPhotoService : IBoatPhotoService
             BoatPhotoID = p.BoatPhotoID,
             PhotoTitle = p.PhotoTitle,
             PhotoDescription = p.PhotoDescription,
-            PhotoURL = _storage.GeneratePresignedGetUrl(p.PhotoKey),
+            PhotoURL = _storage.GeneratePresignedGetUrl(p.PhotoURL!), 
             IsPrimary = p.IsPrimary,
             Active = p.Active,
             Hide = p.Hide
         });
+    }
+
+    public async Task DeletePhotoAsync(int photoId)
+    {
+        var photo = await _repo.GetAsync(photoId);
+        if (photo == null)
+            throw new KeyNotFoundException("Photo not found");
+
+        await _storage.DeleteAsync(photo.PhotoURL!);
+        await _repo.DeleteAsync(photo);
     }
 
     public async Task UpdatePhotoMetadataAsync(int photoId, UpdatePhotoDto dto)
@@ -60,15 +81,5 @@ public class BoatPhotoService : IBoatPhotoService
         photo.IsPrimary = dto.IsPrimary;
 
         await _repo.UpdateAsync(photo);
-    }
-
-    public async Task DeletePhotoAsync(int photoId)
-    {
-        var photo = await _repo.GetAsync(photoId);
-        if (photo == null)
-            throw new KeyNotFoundException("Photo not found");
-
-        await _storage.DeleteAsync(photo.PhotoKey);
-        await _repo.DeleteAsync(photo);
     }
 }

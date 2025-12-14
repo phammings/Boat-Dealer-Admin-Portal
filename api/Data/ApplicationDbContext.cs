@@ -113,13 +113,14 @@ namespace BoatAdminApi.Data
 
             modelBuilder.Entity<BoatPhoto>(entity =>
             {
+                entity.ToTable("BoatPhoto");
                 entity.HasKey(bp => bp.BoatPhotoID);
 
-                // Map C# PhotoKey → DB BoatPhoto
-                entity.Property(bp => bp.PhotoKey)
-                    .HasColumnName("BoatPhoto")
-                    .HasMaxLength(255)
-                    .IsRequired();
+                // IGNORE legacy IMAGE column
+                entity.Ignore("BoatPhoto");
+
+                entity.Property(bp => bp.PhotoURL)
+                    .HasMaxLength(255);
 
                 entity.Property(bp => bp.PhotoTitle)
                     .HasMaxLength(100);
@@ -127,26 +128,17 @@ namespace BoatAdminApi.Data
                 entity.Property(bp => bp.PhotoDescription)
                     .HasMaxLength(255);
 
-                entity.Property(bp => bp.PhotoURL)
-                    .HasMaxLength(255);
-
-                entity.Property(bp => bp.IsPrimary)
-                    .IsRequired();
-
-                entity.Property(bp => bp.Processed)
-                    .IsRequired();
-
-                entity.Property(bp => bp.Active)
-                    .IsRequired();
-
-                entity.Property(bp => bp.Hide)
-                    .IsRequired();
-
-                entity.Property(bp => bp.Valid)
-                    .IsRequired();
-
+                entity.Property(bp => bp.IsPrimary);
+                entity.Property(bp => bp.Processed);
+                entity.Property(bp => bp.Active);
+                entity.Property(bp => bp.Hide);
+                entity.Property(bp => bp.Valid);
             });
 
+
+            modelBuilder.Entity<BoatPhoto>()
+                .Property(bp => bp.IsPrimary)
+                .HasConversion<int>();
 
             // Status is already int in DB, keep as is
             modelBuilder.Entity<BoatSale>()
