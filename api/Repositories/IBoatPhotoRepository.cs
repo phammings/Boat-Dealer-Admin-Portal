@@ -2,7 +2,7 @@ using BoatAdminApi.Models;
 
 public interface IBoatPhotoRepository
 {
-    BoatPhoto CreatePendingPhoto(int boatId, string key, bool isPrimary);
+    BoatPhoto CreatePendingPhoto(int boatId, string? key, bool isPrimary);
 
     Task<BoatPhoto?> GetAsync(int photoId);
 
