@@ -33,6 +33,9 @@ builder.Services.AddScoped<IBoatService, BoatService>();
 builder.Services.AddScoped<IStorageRepository, S3StorageRepository>();
 builder.Services.AddScoped<IBoatPhotoRepository, BoatPhotoRepository>();
 builder.Services.AddScoped<IBoatPhotoService, BoatPhotoService>();
+// Boat video services
+builder.Services.AddScoped<IBoatVideoRepository, BoatVideoRepository>();
+builder.Services.AddScoped<IBoatVideoService, BoatVideoService>();
 
 // ----------------------------
 // CORS (Frontend uploads)
