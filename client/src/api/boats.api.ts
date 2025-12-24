@@ -1,10 +1,19 @@
-import api from "./axios";
-import { Boat } from "../types/Boat";
+import axios from "axios";
+import type { Boat } from "../types/Boat";
 
-export const getBoats = () => api.get<Boat[]>("/boats");
-export const getBoat = (id: string) => api.get<Boat>(`/boats/${id}`);
-export const createBoat = (boat: Boat) => api.post("/boats", boat);
-export const updateBoat = (id: string, boat: Boat) =>
-  api.put(`/boats/${id}`, boat);
-export const deleteBoat = (id: string) =>
-  api.delete(`/boats/${id}`);
+const API_URL = "http://localhost:5299/api/boats";
+const AUTH_HEADER = { Authorization: "7" };
+
+export const getBoats = async (): Promise<Boat[]> => {
+  const res = await axios.get<Boat[]>(API_URL, { headers: AUTH_HEADER });
+  return res.data;
+};
+
+export const deleteBoat = async (id: number) => {
+  await axios.delete(`${API_URL}/${id}`, { headers: AUTH_HEADER });
+};
+
+export const getBoatById = async (id: number): Promise<Boat> => {
+  const res = await axios.get<Boat>(`${API_URL}/${id}`, { headers: AUTH_HEADER });
+  return res.data;
+};
