@@ -80,7 +80,7 @@ export default function BoatTable({
         <Table className="w-full min-w-[800px] sm:table-fixed  h-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="px-4">ID</TableHead>
+              <TableHead className="px-4 pl-7">ID</TableHead>
               <TableHead className="px-4">Make</TableHead>
               <TableHead className="px-4">Model</TableHead>
               <TableHead className="px-4">Year</TableHead>
