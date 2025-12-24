@@ -23,19 +23,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  IconEye,
   IconPencil,
   IconTrash,
   IconChevronsLeft,
   IconChevronsRight,
 } from "@tabler/icons-react"
 
-/* ======================
-   Page size defaults
-====================== */
 function getDefaultPageSize() {
-  if (window.innerWidth < 768) return 5 // mobile
-  return 10 // laptop & desktop
+  if (window.innerWidth < 768) return 5
+  return 10
 }
 
 interface Props {
@@ -68,60 +64,44 @@ export default function BoatTable({
     const start = (page - 1) * pageSize
     return boats.slice(start, start + pageSize)
   }, [boats, page, pageSize])
-  // fixed visual rows to reserve space when fewer items are present
+
   const FIXED_ROWS = 10
+
+  const cell =
+    "px-4 truncate whitespace-nowrap"
 
   return (
     <div className="w-full">
       {/* ================= TABLE ================= */}
-      {/*
-        Fixed container height (header + FIXED_ROWS rows). This ensures the
-        table visual height is the same whether there are fewer rows or many.
-        We allow vertical scrolling when content exceeds the fixed height.
-      */}
       <div
-        className="rounded-lg border shadow-sm overflow-x-auto w-full overflow-y-auto"
+        className="rounded-lg border shadow-sm overflow-x-auto sm:overflow-x-hidden overflow-y-auto"
         style={{ height: `${(FIXED_ROWS + 1) * 3.5}rem` }}
       >
-        <Table className="w-full table-auto md:table-fixed h-full">
+        <Table className="w-full min-w-[800px] sm:table-fixed  h-full">
           <TableHeader>
             <TableRow>
-              <TableHead>Make</TableHead>
-              <TableHead>Model</TableHead>
-              <TableHead className="hidden md:table-cell">Year</TableHead>
-              <TableHead className="hidden md:table-cell">Status</TableHead>
-              <TableHead className="hidden lg:table-cell">City</TableHead>
+              <TableHead className="px-4">ID</TableHead>
+              <TableHead className="px-4">Make</TableHead>
+              <TableHead className="px-4">Model</TableHead>
+              <TableHead className="px-4">Year</TableHead>
+              <TableHead className="px-4">Status</TableHead>
+              <TableHead className="px-4">Source</TableHead>
+              <TableHead className="px-4">Category</TableHead>
+              <TableHead className="px-4">Class</TableHead>
+              <TableHead className="px-4">Stock Number</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {/* ---------- SKELETON ---------- */}
             {loading &&
-              // render FIXED_ROWS skeleton rows to stabilize height
               Array.from({ length: FIXED_ROWS }).map((_, i) => (
                 <TableRow key={i} className="h-12">
-                  <TableCell>
-                    <Skeleton className="h-6 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-56" />
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <Skeleton className="h-6 w-20" />
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <Skeleton className="h-6 w-24" />
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">
-                    <Skeleton className="h-6 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                    </div>
-                  </TableCell>
+                  {Array.from({ length: 10 }).map((__, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className="h-6 w-full" />
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
 
@@ -129,39 +109,66 @@ export default function BoatTable({
             {!loading &&
               visibleBoats.map((boat) => (
                 <TableRow key={boat.boatID} className="h-12">
-                  <TableCell className="font-medium">
+                  <TableCell className={`$px-4 whitespace-nowrap font-medium` } >
+                    <button
+                      onClick={() => onView(boat.boatID)}
+                      className="text-blue-600 underline"
+                      title={`View boat ${boat.boatID}`}
+                    >
+                      {boat.boatID}
+                    </button>
+                  </TableCell>
+
+                  <TableCell title={boat.make} className={cell}>
                     {boat.make}
                   </TableCell>
 
-                  <TableCell className="max-w-[32rem] truncate">
+                  <TableCell title={boat.model} className={cell}>
                     {boat.model}
                   </TableCell>
 
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell title={String(boat.boatYear)} className={cell}>
                     {boat.boatYear}
                   </TableCell>
 
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell
+                    title={boat.status ? "Active" : "Inactive"}
+                    className={cell}
+                  >
                     {boat.status ? "Active" : "Inactive"}
                   </TableCell>
 
-                  <TableCell className="hidden lg:table-cell">
+                  <TableCell title={boat.city} className={cell}>
                     {boat.city}
+                  </TableCell>
+
+                  <TableCell
+                    title={boat.category ?? "-"}
+                    className={cell}
+                  >
+                    {boat.category ?? "-"}
+                  </TableCell>
+
+                  <TableCell
+                    title={boat.class ?? "-"}
+                    className={cell}
+                  >
+                    {boat.class ?? "-"}
+                  </TableCell>
+
+                  <TableCell
+                    title={boat.stockNumber ?? "-"}
+                    className={cell}
+                  >
+                    {boat.stockNumber ?? "-"}
                   </TableCell>
 
                   <TableCell>
                     <div className="flex justify-center gap-2">
                       <Button
                         size="icon"
-                        variant="ghost"
-                        onClick={() => onView(boat.boatID)}
-                      >
-                        <IconEye size={18} />
-                      </Button>
-
-                      <Button
-                        size="icon"
                         variant="outline"
+                        className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
                         onClick={() => onEdit(boat.boatID)}
                       >
                         <IconPencil size={18} />
@@ -172,22 +179,19 @@ export default function BoatTable({
                         variant="outline"
                         className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                         onClick={() => onDelete(boat.boatID)}
-                        >
+                      >
                         <IconTrash size={18} />
-                        </Button>
-
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-        
           </TableBody>
         </Table>
 
-        {/* If there are no boats (and not loading) show a centered message
-            inside the fixed-height container so the layout stays consistent. */}
+        {/* ---------- EMPTY STATE ---------- */}
         {!loading && (!boats || boats.length === 0) && (
-          <div className="flex items-center justify-center text-muted-foreground h-full">
+          <div className="flex items-center justify-center h-full text-muted-foreground">
             No boats available
           </div>
         )}
@@ -195,8 +199,7 @@ export default function BoatTable({
 
       {/* ================= FOOTER ================= */}
       {!loading && totalPages > 1 && (
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full mt-4">
-          {/* Rows per page */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-4">
           <div className="flex items-center gap-2 whitespace-nowrap">
             <span className="text-sm text-muted-foreground">
               Rows per page
@@ -218,100 +221,81 @@ export default function BoatTable({
             </Select>
           </div>
 
-          {/* ================= PAGINATION ================= */}
-          <div className="flex w-full md:w-auto md:justify-end">
-            <Pagination>
-            <PaginationContent className="flex items-center gap-1">
-                {/* START */}
-                <PaginationItem>
+          <Pagination>
+           <PaginationContent className="flex justify-end gap-1 ml-auto">
+              <PaginationItem>
                 <Button
-                    size="icon"
-                    variant="ghost"
-                    disabled={page === 1}
-                    onClick={() => setPage(1)}
-                    className="focus-visible:outline-none"
+                  size="icon"
+                  variant="ghost"
+                  disabled={page === 1}
+                  onClick={() => setPage(1)}
                 >
-                    <IconChevronsLeft size={18} />
+                  <IconChevronsLeft size={18} />
                 </Button>
-                </PaginationItem>
+              </PaginationItem>
 
-                {/* PREVIOUS */}
-                <PaginationItem>
+              <PaginationItem>
                 <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={page === 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="focus-visible:outline-none"
+                  size="sm"
+                  variant="outline"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                 >
-                    Prev
+                  Prev
                 </Button>
-                </PaginationItem>
+              </PaginationItem>
 
-                {/* PAGE - 1 */}
-                {page > 1 && (
-                <PaginationItem>
-                    <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setPage(page - 1)}
-                    className="focus-visible:outline-none"
-                    >
-                    {page - 1}
-                    </Button>
-                </PaginationItem>
-                )}
+              <PaginationItem>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  {page-1}
+                </Button>
+              </PaginationItem>
 
-                {/* CURRENT PAGE */}
-                <PaginationItem>
-                <div className="inline-flex items-center justify-center h-8 px-5 rounded-md text-sm font-semibold text-white bg-blue-600 cursor-default select-none hover:bg-blue-700">
-                    {page}
+              <PaginationItem>
+                <div className="inline-flex h-8 px-5 items-center justify-center rounded-md bg-blue-600 text-sm font-semibold text-white">
+                  {page}
                 </div>
-                </PaginationItem>
+              </PaginationItem>
 
-                {/* PAGE + 1 */}
-                {page < totalPages && (
-                <PaginationItem>
-                    <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setPage(page + 1)}
-                    className="focus-visible:outline-none"
-                    >
-                    {page + 1}
-                    </Button>
-                </PaginationItem>
-                )}
-
-                {/* NEXT */}
-                <PaginationItem>
+              <PaginationItem>
                 <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={page === totalPages}
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    className="focus-visible:outline-none"
+                  size="sm"
+                  variant="outline"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
-                    Next
+                  {page+1}
                 </Button>
-                </PaginationItem>
+              </PaginationItem>
 
-                {/* END */}
-                <PaginationItem>
+              <PaginationItem>
                 <Button
-                    size="icon"
-                    variant="ghost"
-                    disabled={page === totalPages}
-                    onClick={() => setPage(totalPages)}
-                    className="focus-visible:outline-none"
+                  size="sm"
+                  variant="outline"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
-                    <IconChevronsRight size={18} />
+                  Next
                 </Button>
-                </PaginationItem>
+              </PaginationItem>
+
+              <PaginationItem>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  disabled={page === totalPages}
+                  onClick={() => setPage(totalPages)}
+                >
+                  <IconChevronsRight size={18} />
+                </Button>
+              </PaginationItem>
             </PaginationContent>
-            </Pagination>
-            </div>
-
+          </Pagination>
         </div>
       )}
     </div>
