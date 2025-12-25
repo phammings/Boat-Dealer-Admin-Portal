@@ -34,7 +34,7 @@ export default function BoatsPage() {
   return (
 <div className="w-full">
   <div className="px-6">
-    <div className="mx-auto w-full max-w-[95vw] px-6">
+    <div className="mx-auto w-full max-w-[95vw] px-6 py-8">
       {/* Header + Button */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-2xl font-bold leading-none">
