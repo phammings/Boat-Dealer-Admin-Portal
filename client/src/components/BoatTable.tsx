@@ -74,7 +74,7 @@ export default function BoatTable({
     <div className="w-full">
       {/* ================= TABLE ================= */}
       <div
-        className="rounded-lg border shadow-sm overflow-x-auto sm:overflow-x-hidden overflow-y-auto"
+        className="rounded-lg border shadow-sm overflow-x-auto sm:overflow-x-hidden overflow-y-auto sm:overflow-y-hidden"
         style={{ height: `${(FIXED_ROWS + 1) * 3.5}rem` }}
       >
         <Table className="w-full min-w-[800px] sm:table-fixed  h-full">
