@@ -47,7 +47,7 @@ export default function BoatsPage() {
         <Button
           variant="default"
           className="bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center gap-2 py-2 px-4"
-          onClick={() => navigate("/create")}
+          onClick={() => navigate("/create/details")}
         >
           <span>Create Boat</span>
           <IconPlus size={18} />

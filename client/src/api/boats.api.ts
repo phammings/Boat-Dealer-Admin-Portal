@@ -54,3 +54,26 @@ export async function createBoat(payload: {
   })
   return res.data
 }
+
+
+export interface PresignedRequestPayload {
+  boatID: number;
+  fileName: string;
+  contentType: string;
+  isPrimary: boolean;
+}
+
+export interface PresignedResponse {
+  boatPhotoID: number;
+  uploadUrl: string; // S3 presigned URL
+  fileKey: string; // S3 object key
+}
+
+export const getPresignedUpload = async (payload: PresignedRequestPayload) => {
+  const { data } = await api.post<PresignedResponse>(
+    "http://localhost:5299/api/boats/photos/presigned-upload",
+    payload
+  );
+  return data;
+};
+

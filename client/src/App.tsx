@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BoatsPage from "./pages/BoatsPage";
 import BoatViewPage from "./pages/BoatViewPage";
 import BoatCreatePage from "./pages/BoatCreatePage";
+import BoatPhotoUploadPage from "./pages/BoatPhotoUploadPage";
 import { ToastContainer } from "react-toastify";
 
 export default function App() {
@@ -11,7 +12,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<BoatsPage />} />
         <Route path="/view/:id" element={<BoatViewPage />} />
-        <Route path="/create" element={<BoatCreatePage />} />
+        <Route path="/create/details" element={<BoatCreatePage />} />
+        <Route path="/create/photos/:id" element={<BoatPhotoUploadPage />} />
       </Routes>
     </BrowserRouter>
   );

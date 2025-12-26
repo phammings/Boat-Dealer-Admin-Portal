@@ -36,7 +36,7 @@ export default function BoatCreatePage() {
   setLoading(true)
 
   try {
-    await createBoat({
+    const createdBoat = await createBoat({
       status: Number(data.status),
       boatType: data.boatType,
       classCode: data.classCode,
@@ -62,7 +62,7 @@ export default function BoatCreatePage() {
     })
     toast.success("Boat created successfully")
 
-    navigate("/")
+    navigate(`/create/photos/${createdBoat.boatID}`, { state: { boatID: createdBoat.boatID } });
   } finally {
     setLoading(false)
   }
