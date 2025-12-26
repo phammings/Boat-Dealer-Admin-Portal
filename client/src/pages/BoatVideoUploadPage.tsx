@@ -57,8 +57,9 @@ export default function BoatVideoUploadPage() {
     imageUrl: "",
   })
 
-  /* ---------------- Thumbnail Resolver ---------------- */
+  const isLocked = adding || editingIndex !== null
 
+  /* ---------------- Thumbnail Resolver ---------------- */
   const getThumbnail = async (url: string): Promise<string> => {
     // YouTube
     const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)
@@ -80,7 +81,6 @@ export default function BoatVideoUploadPage() {
   }
 
   /* ---------------- API ---------------- */
-
   const persistVideo = async (video: BoatVideo) => {
     await axios.post("http://localhost:5299/api/boats/videos", {
       title: video.title,
@@ -96,7 +96,6 @@ export default function BoatVideoUploadPage() {
   }
 
   /* ---------------- Actions ---------------- */
-
   const saveNew = async () => {
     if (!draft.title || !draft.url) {
       toast.error("Title and URL required")
@@ -165,7 +164,6 @@ export default function BoatVideoUploadPage() {
   }
 
   /* ---------------- UI ---------------- */
-
   return (
     <div className="min-h-screen bg-muted/30 p-6 flex justify-center">
       <Card className="w-full max-w-6xl">
@@ -243,33 +241,47 @@ export default function BoatVideoUploadPage() {
                             variant="ghost"
                             onClick={() => saveEdit(idx)}
                             disabled={saving}
+                            className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer"
                           >
-                            <IconCheck className="text-green-600" />
+                            <IconCheck />
                           </Button>
                           <Button
                             size="icon"
                             variant="ghost"
                             onClick={() => setEditingIndex(null)}
+                            className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
                           >
                             <IconX />
                           </Button>
                         </>
                       ) : (
                         <>
-                          <Button
+                        <Button
                             size="icon"
-                            variant="ghost"
+                            variant="outline"
+                            disabled={isLocked}
+                            className={`border-blue-500 text-blue-500 ${
+                              isLocked
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:bg-blue-500 hover:text-white cursor-pointer"
+                            }`}
                             onClick={() => startEdit(idx)}
-                          >
-                            <IconPencil size={18} />
-                          </Button>
+                        >
+                        <IconPencil size={18} />
+                        </Button>
                           <Button
                             size="icon"
-                            variant="ghost"
+                            variant="outline"
+                            disabled={isLocked}
+                            className={`border-red-500 text-red-500 ${
+                              isLocked
+                                ? "opacity-40 cursor-not-allowed"
+                                : "hover:bg-red-500 hover:text-white cursor-pointer"
+                            }`}
                             onClick={() => removeVideo(idx)}
-                          >
-                            <IconTrash size={18} className="text-red-500" />
-                          </Button>
+                        >
+                        <IconTrash size={18} />
+                        </Button>
                         </>
                       )}
                     </TableCell>
@@ -304,13 +316,15 @@ export default function BoatVideoUploadPage() {
                       variant="ghost"
                       onClick={saveNew}
                       disabled={saving}
+                      className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer"
                     >
-                      <IconCheck className="text-green-600" />
+                      <IconCheck />
                     </Button>
                     <Button
                       size="icon"
                       variant="ghost"
                       onClick={() => setAdding(false)}
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
                     >
                       <IconX />
                     </Button>
@@ -321,22 +335,28 @@ export default function BoatVideoUploadPage() {
           </Table>
 
           <div className="flex justify-between">
-            {!adding && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setAdding(true)
-                  setDraft({ title: "", url: "", imageUrl: "" })
-                }}
-                className="flex items-center gap-2"
-              >
-                <IconPlus size={16} />
-                Add Video
-              </Button>
-            )}
+            <Button
+              variant="outline"
+              disabled={isLocked}
+              onClick={() => {
+                setAdding(true)
+                setDraft({ title: "", url: "", imageUrl: "" })
+              }}
+              className={`flex items-center gap-2 ${
+                isLocked ? "opacity-40 cursor-not-allowed" : ""
+              }`}
+            >
+              <IconPlus size={16} />
+              Add Video
+            </Button>
 
             <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white ml-auto"
+              disabled={isLocked}
+              className={`ml-auto ${
+                isLocked
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
+              }`}
               onClick={() => navigate("/")}
             >
               Complete
