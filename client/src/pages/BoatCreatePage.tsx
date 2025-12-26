@@ -67,8 +67,7 @@ export default function BoatCreatePage() {
 }
 
 
-  const selectClass =
-  "w-full h-10 px-3 py-2 text-sm font-normal border border-input rounded-md bg-background text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring appearance-none"
+  const selectClass = "w-full h-10 px-3 py-2 text-sm font-normal border !border-input rounded !bg-background focus:outline-none focus:ring-1 focus:ring-ring"
 
   return (
     <div className="min-h-screen bg-muted/30 p-6 flex justify-center">
