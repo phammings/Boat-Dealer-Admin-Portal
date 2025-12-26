@@ -77,3 +77,23 @@ export const getPresignedUpload = async (payload: PresignedRequestPayload) => {
   return data;
 };
 
+export interface BoatVideoPayload {
+  title: string
+  url: string
+  imageUrl: string
+  boat_VehicleID: number
+}
+
+export const createBoatVideo = async (payload: BoatVideoPayload) => {
+  const { data } = await api.post("/api/boats/videos", payload, { headers: AUTH_HEADER })
+  return data // assuming response includes id
+}
+
+export const updateBoatVideo = async (videoID: number, payload: BoatVideoPayload) => {
+  const { data } = await api.put(`/api/boats/videos/${videoID}`, payload, { headers: AUTH_HEADER })
+  return data
+}
+
+export const toggleBoatVideoStatus = async (videoID: number, active: boolean) => {
+  await api.patch(`/api/boats/videos/${videoID}/status?active=${active}`, null, { headers: AUTH_HEADER })
+}

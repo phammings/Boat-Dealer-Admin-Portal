@@ -1,7 +1,5 @@
 import { useState } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
-import axios from "axios"
-
 import {
   Card,
   CardContent,
@@ -19,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { BoatFormStepper } from "@/components/BoatFormStepper"
+import { toast } from "react-toastify"
 
 import {
   IconCheck,
@@ -28,9 +27,11 @@ import {
   IconPlus,
   IconPencil,
 } from "@tabler/icons-react"
-import { toast } from "react-toastify"
 
-interface BoatVideo {
+import { createBoatVideo, updateBoatVideo, toggleBoatVideoStatus } from "../api/boats.api"
+
+export interface BoatVideo {
+  id?: number
   title: string
   url: string
   imageUrl: string
@@ -43,7 +44,6 @@ export default function BoatVideoUploadPage() {
 
   const boatID =
     (location.state as { boatID?: number })?.boatID ?? Number(params.id)
-
   if (!boatID) return <div>Boat ID not found</div>
 
   const [videos, setVideos] = useState<BoatVideo[]>([])
@@ -63,36 +63,16 @@ export default function BoatVideoUploadPage() {
   const getThumbnail = async (url: string): Promise<string> => {
     // YouTube
     const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)
-    if (yt) {
-      return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`
-    }
+    if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`
 
-    // Vimeo (via oEmbed)
+    // Vimeo via oEmbed
     const vimeo = url.match(/vimeo\.com\/(\d+)/)
     if (vimeo) {
-      const res = await fetch(
-        `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`
-      )
+      const res = await fetch(`https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`)
       const data = await res.json()
       return data.thumbnail_url
     }
-
     return ""
-  }
-
-  /* ---------------- API ---------------- */
-  const persistVideo = async (video: BoatVideo) => {
-    await axios.post("http://localhost:5299/api/boats/videos", {
-      title: video.title,
-      description: "",
-      url: video.url,
-      active: true,
-      hide: false,
-      srcType: 0,
-      boat_VehicleID: boatID,
-      imageUrl: video.imageUrl,
-      priority: null,
-    })
   }
 
   /* ---------------- Actions ---------------- */
@@ -105,16 +85,10 @@ export default function BoatVideoUploadPage() {
     setSaving(true)
     try {
       const imageUrl = await getThumbnail(draft.url)
+      const payload = { ...draft, imageUrl, boat_VehicleID: boatID }
 
-      const video: BoatVideo = {
-        title: draft.title,
-        url: draft.url,
-        imageUrl,
-      }
-
-      await persistVideo(video)
-
-      setVideos(prev => [...prev, video])
+      const savedVideo = await createBoatVideo(payload)
+      setVideos(prev => [...prev, { ...payload, id: savedVideo.id }])
       setDraft({ title: "", url: "", imageUrl: "" })
       setAdding(false)
 
@@ -128,23 +102,16 @@ export default function BoatVideoUploadPage() {
 
   const saveEdit = async (index: number) => {
     if (!draft.title || !draft.url) return
-
     setSaving(true)
     try {
       const imageUrl = await getThumbnail(draft.url)
+      const videoID = videos[index].id
+      if (!videoID) throw new Error("Video ID missing")
 
-      const updated: BoatVideo = {
-        title: draft.title,
-        url: draft.url,
-        imageUrl,
-      }
+      const payload = { ...draft, imageUrl, boat_VehicleID: boatID }
+      await updateBoatVideo(videoID, payload)
 
-      await persistVideo(updated)
-
-      setVideos(prev =>
-        prev.map((v, i) => (i === index ? updated : v))
-      )
-
+      setVideos(prev => prev.map((v, i) => (i === index ? { ...payload, id: videoID } : v)))
       setEditingIndex(null)
       toast.success("Video updated")
     } catch {
@@ -159,8 +126,23 @@ export default function BoatVideoUploadPage() {
     setEditingIndex(index)
   }
 
-  const removeVideo = (index: number) => {
-    setVideos(prev => prev.filter((_, i) => i !== index))
+  const removeVideo = async (index: number) => {
+    const videoID = videos[index].id
+    if (videoID) {
+      setSaving(true)
+      try {
+        await toggleBoatVideoStatus(videoID, false)
+        setVideos(prev => prev.filter((_, i) => i !== index))
+        toast.success("Video removed")
+      } catch {
+        toast.error("Failed to remove video")
+      } finally {
+        setSaving(false)
+      }
+    } else {
+      // Local row, just remove
+      setVideos(prev => prev.filter((_, i) => i !== index))
+    }
   }
 
   /* ---------------- UI ---------------- */
@@ -172,7 +154,7 @@ export default function BoatVideoUploadPage() {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <BoatFormStepper currentStep={3}/>
+          <BoatFormStepper currentStep={3} />
 
           <Table>
             <TableHeader>
@@ -187,15 +169,11 @@ export default function BoatVideoUploadPage() {
             <TableBody>
               {videos.map((v, idx) => {
                 const isEditing = editingIndex === idx
-
                 return (
                   <TableRow key={idx}>
                     <TableCell>
                       {v.imageUrl && (
-                        <img
-                          src={v.imageUrl}
-                          className="h-14 w-24 object-contain rounded bg-muted"
-                        />
+                        <img src={v.imageUrl} className="h-14 w-24 object-contain rounded bg-muted" />
                       )}
                     </TableCell>
 
@@ -203,22 +181,16 @@ export default function BoatVideoUploadPage() {
                       {isEditing ? (
                         <Input
                           value={draft.title}
-                          onChange={e =>
-                            setDraft({ ...draft, title: e.target.value })
-                          }
+                          onChange={e => setDraft({ ...draft, title: e.target.value })}
                         />
-                      ) : (
-                        v.title
-                      )}
+                      ) : v.title}
                     </TableCell>
 
                     <TableCell>
                       {isEditing ? (
                         <Input
                           value={draft.url}
-                          onChange={e =>
-                            setDraft({ ...draft, url: e.target.value })
-                          }
+                          onChange={e => setDraft({ ...draft, url: e.target.value })}
                         />
                       ) : (
                         <a
@@ -236,52 +208,21 @@ export default function BoatVideoUploadPage() {
                     <TableCell className="text-right flex gap-2 justify-end">
                       {isEditing ? (
                         <>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => saveEdit(idx)}
-                            disabled={saving}
-                            className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer"
-                          >
+                          <Button size="icon" variant="ghost" onClick={() => saveEdit(idx)} disabled={saving} className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer">
                             <IconCheck />
                           </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => setEditingIndex(null)}
-                            className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
-                          >
+                          <Button size="icon" variant="ghost" onClick={() => setEditingIndex(null)} className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
                             <IconX />
                           </Button>
                         </>
                       ) : (
                         <>
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            disabled={isLocked}
-                            className={`border-blue-500 text-blue-500 ${
-                              isLocked
-                                ? "opacity-40 cursor-not-allowed"
-                                : "hover:bg-blue-500 hover:text-white cursor-pointer"
-                            }`}
-                            onClick={() => startEdit(idx)}
-                        >
-                        <IconPencil size={18} />
-                        </Button>
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            disabled={isLocked}
-                            className={`border-red-500 text-red-500 ${
-                              isLocked
-                                ? "opacity-40 cursor-not-allowed"
-                                : "hover:bg-red-500 hover:text-white cursor-pointer"
-                            }`}
-                            onClick={() => removeVideo(idx)}
-                        >
-                        <IconTrash size={18} />
-                        </Button>
+                          <Button size="icon" variant="outline" disabled={isLocked} onClick={() => startEdit(idx)} className={`border-blue-500 text-blue-500 ${isLocked ? "opacity-40 cursor-not-allowed" : "hover:bg-blue-500 hover:text-white cursor-pointer"}`}>
+                            <IconPencil size={18} />
+                          </Button>
+                          <Button size="icon" variant="outline" disabled={isLocked} onClick={() => removeVideo(idx)} className={`border-red-500 text-red-500 ${isLocked ? "opacity-40 cursor-not-allowed" : "hover:bg-red-500 hover:text-white cursor-pointer"}`}>
+                            <IconTrash size={18} />
+                          </Button>
                         </>
                       )}
                     </TableCell>
@@ -293,39 +234,16 @@ export default function BoatVideoUploadPage() {
                 <TableRow className="bg-muted/40">
                   <TableCell />
                   <TableCell>
-                    <Input
-                      placeholder="Title"
-                      value={draft.title}
-                      onChange={e =>
-                        setDraft({ ...draft, title: e.target.value })
-                      }
-                    />
+                    <Input placeholder="Title" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />
                   </TableCell>
                   <TableCell>
-                    <Input
-                      placeholder="Video URL"
-                      value={draft.url}
-                      onChange={e =>
-                        setDraft({ ...draft, url: e.target.value })
-                      }
-                    />
+                    <Input placeholder="Video URL" value={draft.url} onChange={e => setDraft({ ...draft, url: e.target.value })} />
                   </TableCell>
                   <TableCell className="text-right flex gap-2 justify-end">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={saveNew}
-                      disabled={saving}
-                      className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer"
-                    >
+                    <Button size="icon" variant="ghost" onClick={saveNew} disabled={saving} className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white cursor-pointer">
                       <IconCheck />
                     </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setAdding(false)}
-                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
-                    >
+                    <Button size="icon" variant="ghost" onClick={() => setAdding(false)} className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer">
                       <IconX />
                     </Button>
                   </TableCell>
@@ -335,30 +253,11 @@ export default function BoatVideoUploadPage() {
           </Table>
 
           <div className="flex justify-between">
-            <Button
-              variant="outline"
-              disabled={isLocked}
-              onClick={() => {
-                setAdding(true)
-                setDraft({ title: "", url: "", imageUrl: "" })
-              }}
-              className={`flex items-center gap-2 ${
-                isLocked ? "opacity-40 cursor-not-allowed" : ""
-              }`}
-            >
-              <IconPlus size={16} />
-              Add Video
+            <Button variant="outline" disabled={isLocked} onClick={() => { setAdding(true); setDraft({ title: "", url: "", imageUrl: "" }) }} className={`flex items-center gap-2 ${isLocked ? "opacity-40 cursor-not-allowed" : ""}`}>
+              <IconPlus size={16} /> Add Video
             </Button>
 
-            <Button
-              disabled={isLocked}
-              className={`ml-auto ${
-                isLocked
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-500 hover:bg-blue-600 text-white"
-              }`}
-              onClick={() => navigate("/")}
-            >
+            <Button disabled={isLocked} className={`ml-auto ${isLocked ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`} onClick={() => navigate("/")}>
               Complete
             </Button>
           </div>

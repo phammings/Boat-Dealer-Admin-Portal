@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { getPresignedUpload } from "../api/boats.api";
 import axios from "axios";
@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { IconTrash, IconStar } from "@tabler/icons-react";
 import { BoatFormStepper } from "@/components/BoatFormStepper";
+import { toast } from "react-toastify";
 
 interface UploadedPhoto {
   file: File;
@@ -16,6 +17,7 @@ interface UploadedPhoto {
 }
 
 export default function BoatPhotoUploadPage() {
+    const navigate = useNavigate()
   const location = useLocation();
   const params = useParams<{ id: string }>();
 
@@ -76,13 +78,14 @@ export default function BoatPhotoUploadPage() {
         photo.s3Key = presigned.fileKey;
       }
 
-      alert("All photos uploaded successfully!");
+      toast.success("All photos uploaded successfully!");
       setPhotos([]);
     } catch (err) {
       console.error(err);
-      alert("Failed to upload photos");
+      toast.error("Failed to upload photos");
     } finally {
       setUploading(false);
+      navigate(`/create/videos/${boatID}`, { state: { boatID: boatID } });
     }
   };
 
@@ -167,8 +170,6 @@ export default function BoatPhotoUploadPage() {
                 ))}
             </div>
             )}
-
-
         </CardContent>
       </Card>
     </div>
