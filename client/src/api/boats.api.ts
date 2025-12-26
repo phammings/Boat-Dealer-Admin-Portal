@@ -43,7 +43,6 @@ export async function createBoat(payload: {
   fuelType: string
   description: string
   cityID: number
-  sellerID: number
 }) {
   const res = await api.post("/api/boats", payload, {
     headers: AUTH_HEADER,

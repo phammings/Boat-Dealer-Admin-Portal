@@ -1,35 +1,41 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { Boat } from "../types/Boat";
-import { getBoats, deleteBoat } from "../api/boats.api";
-import BoatTable from "../components/BoatTable";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import type { Boat } from "../types/Boat"
+import { getBoats, deleteBoat } from "../api/boats.api"
+import BoatTable from "../components/BoatTable"
+import { Button } from "@/components/ui/button"
 import { IconPlus } from "@tabler/icons-react"
 
 export default function BoatsPage() {
-  const [boats, setBoats] = useState<Boat[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [boats, setBoats] = useState<Boat[] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
+
+  const didFetchRef = useRef(false)
 
   useEffect(() => {
-    loadBoats();
-  }, []);
+    if (didFetchRef.current) return
+    didFetchRef.current = true
+
+    loadBoats()
+  }, [])
 
   const loadBoats = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const data = await getBoats();
-      setBoats(data);
+      const data = await getBoats()
+      setBoats(data)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure?")) return;
-    await deleteBoat(id);
-    setBoats((prev) => prev?.filter((b) => b.boatID !== id) ?? null);
-  };
+    if (!confirm("Are you sure?")) return
+
+    await deleteBoat(id)
+    setBoats((prev) => prev?.filter((b) => b.boatID !== id) ?? null)
+  }
 
   return (
 <div className="w-full">

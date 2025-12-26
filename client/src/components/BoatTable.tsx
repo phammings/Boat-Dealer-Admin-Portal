@@ -74,7 +74,7 @@ export default function BoatTable({
     <div className="w-full">
       {/* ================= TABLE ================= */}
       <div
-        className="rounded-lg border shadow-sm overflow-x-auto sm:overflow-x-hidden overflow-y-auto sm:overflow-y-hidden"
+        className="rounded-lg border shadow-sm overflow-x-auto sm:overflow-x-hidden overflow-y-auto"
         style={{ height: `${(FIXED_ROWS + 1) * 3.5}rem` }}
       >
         <Table className="w-full min-w-[800px] sm:table-fixed  h-full">
@@ -112,7 +112,7 @@ export default function BoatTable({
                   <TableCell className={`$px-4 whitespace-nowrap font-medium` } >
                     <button
                       onClick={() => onView(boat.boatID)}
-                      className="text-blue-600 underline"
+                      className="text-blue-600 underline cursor-pointer"
                       title={`View boat ${boat.boatID}`}
                     >
                       {boat.boatID}
@@ -168,7 +168,7 @@ export default function BoatTable({
                       <Button
                         size="icon"
                         variant="outline"
-                        className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
+                        className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer"
                         onClick={() => onEdit(boat.boatID)}
                       >
                         <IconPencil size={18} />
@@ -177,7 +177,7 @@ export default function BoatTable({
                       <Button
                         size="icon"
                         variant="outline"
-                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
                         onClick={() => onDelete(boat.boatID)}
                       >
                         <IconTrash size={18} />
@@ -208,10 +208,10 @@ export default function BoatTable({
               value={pageSize.toString()}
               onValueChange={(v) => setPageSize(Number(v))}
             >
-              <SelectTrigger className="w-[90px]">
+              <SelectTrigger className="w-[90px] cursor-pointer hover:bg-gray-100 transition-colors">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent >
                 {[5, 10, 20].map((size) => (
                   <SelectItem key={size} value={size.toString()}>
                     {size}
@@ -240,6 +240,7 @@ export default function BoatTable({
                   variant="outline"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="cursor-pointer"
                 >
                   Prev
                 </Button>
@@ -251,13 +252,14 @@ export default function BoatTable({
                   variant="outline"
                   disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
+                   className="cursor-pointer"
                 >
                   {page-1}
                 </Button>
               </PaginationItem>
 
               <PaginationItem>
-                <div className="inline-flex h-8 px-5 items-center justify-center rounded-md bg-blue-600 text-sm font-semibold text-white">
+                <div className="inline-flex h-8 px-5 items-center justify-center rounded-md bg-blue-600 text-sm font-semibold text-white cursor-pointer">
                   {page}
                 </div>
               </PaginationItem>
@@ -268,6 +270,7 @@ export default function BoatTable({
                   variant="outline"
                   disabled={page === totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="cursor-pointer"
                 >
                   {page+1}
                 </Button>
@@ -279,6 +282,7 @@ export default function BoatTable({
                   variant="outline"
                   disabled={page === totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="cursor-pointer"
                 >
                   Next
                 </Button>
@@ -290,6 +294,7 @@ export default function BoatTable({
                   variant="ghost"
                   disabled={page === totalPages}
                   onClick={() => setPage(totalPages)}
+                  className="cursor-pointer"
                 >
                   <IconChevronsRight size={18} />
                 </Button>
