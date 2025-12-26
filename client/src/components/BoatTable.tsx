@@ -110,13 +110,13 @@ export default function BoatTable({
               visibleBoats.map((boat) => (
                 <TableRow key={boat.boatID} className="h-12">
                   <TableCell className={`$px-4 whitespace-nowrap font-medium` } >
-                    <button
-                      onClick={() => onView(boat.boatID)}
-                      className="text-blue-600 underline cursor-pointer"
-                      title={`View boat ${boat.boatID}`}
+                    <a
+                        onClick={() => onView(boat.boatID)}
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-blue-600 hover:underline pl-5 cursor-pointer"
                     >
                       {boat.boatID}
-                    </button>
+                    </a>
                   </TableCell>
 
                   <TableCell title={boat.make} className={cell}>
