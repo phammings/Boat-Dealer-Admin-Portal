@@ -17,7 +17,7 @@ namespace BoatAdminApi.Repositories
         public async Task<IEnumerable<BoatListDto>> GetBoatsByDealerAsync(int dealerId)
         {
             return await (from bs in _context.BoatSales
-                          where bs.SellerID == dealerId
+                          where bs.SellerID == dealerId && bs.Active == true
                           join vc in _context.VehicleClasses
                               on bs.ClassCode equals vc.Code into vcJoin
                           from vc in vcJoin.DefaultIfEmpty()
@@ -27,6 +27,7 @@ namespace BoatAdminApi.Repositories
                           join city in _context.Cities
                               on bs.CityID equals city.CityID into cityJoin
                           from city in cityJoin.DefaultIfEmpty()
+                          orderby bs.LastModified descending
                           select new BoatListDto
                           {
                               BoatID = bs.BoatID,
