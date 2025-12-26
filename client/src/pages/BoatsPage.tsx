@@ -31,8 +31,6 @@ export default function BoatsPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure?")) return
-
     await deleteBoat(id)
     setBoats((prev) => prev?.filter((b) => b.boatID !== id) ?? null)
   }

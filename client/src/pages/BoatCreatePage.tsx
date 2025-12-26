@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { BoatStatus, DriveType, FuelType } from "../enums/enums"
 import { BoatFormStepper } from "@/components/BoatFormStepper"
 
@@ -60,7 +60,7 @@ export default function BoatCreatePage() {
       description: data.description,
       cityID: Number(data.cityID),
     })
-    toast.success("Boat created successfully!")
+    toast.success("Boat created successfully")
 
     navigate("/")
   } finally {

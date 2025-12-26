@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import type { Boat } from "../types/Boat"
+import { DeleteBoatDialog } from "./DeleteBoatDialog"
 import {
   Table,
   TableBody,
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/select"
 import {
   IconPencil,
-  IconTrash,
   IconChevronsLeft,
   IconChevronsRight,
 } from "@tabler/icons-react"
@@ -174,14 +174,10 @@ export default function BoatTable({
                         <IconPencil size={18} />
                       </Button>
 
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer"
-                        onClick={() => onDelete(boat.boatID)}
-                      >
-                        <IconTrash size={18} />
-                      </Button>
+                      <DeleteBoatDialog
+                        boatId={boat.boatID}
+                        onDeleted={() => onDelete(boat.boatID)}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
