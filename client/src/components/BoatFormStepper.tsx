@@ -35,7 +35,7 @@ export function BoatFormStepper({ currentStep }: StepperUIProps) {
           return (
             <Stepper.Navigation>
               {methods.all.map((step) => (
-                <Stepper.Step key={step.id} of={step.id} >
+                <Stepper.Step key={step.id} of={step.id} style={{ cursor: "default" }} >
                   <Stepper.Title>{step.title}</Stepper.Title>
                 </Stepper.Step>
               ))}
