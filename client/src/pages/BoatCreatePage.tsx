@@ -20,6 +20,7 @@ import {
 import { toast } from "react-toastify"
 import { BoatStatus } from "../enums/enums"
 import { BoatFormStepper } from "@/components/BoatFormStepper"
+// import CityAutocomplete from "@/components/CityAutocomplete"
 
 /* ---------------- helpers ---------------- */
 
@@ -186,7 +187,7 @@ export default function BoatCreatePage() {
 
               {/* STOCK NUMBER */}
               <div>
-                <Label>Stock Number</Label>
+                <RequiredLabel>Stock Number</RequiredLabel>
                 <Input
                   {...register("stockNumber", {
                     required: "Stock number required",
@@ -430,6 +431,7 @@ export default function BoatCreatePage() {
                   <Controller
                     name="currency"
                     control={control}
+                    defaultValue={"CAD"}
                     rules={{ required: "Currency required" }}
                     render={({ field }) => (
                       <>
@@ -582,6 +584,13 @@ export default function BoatCreatePage() {
 
 
           {/* Location */}
+        {/* <section>
+        <h3 className="font-semibold mb-4">Location</h3>
+        <Separator />
+        <div className="grid md:grid-cols-3 gap-4 pt-6">
+            <CityAutocomplete control={control} setValue={setValue} errors={errors} />
+        </div>
+        </section> */}
           <section>
             <h3 className="font-semibold mb-4">Location</h3>
             <Separator />
