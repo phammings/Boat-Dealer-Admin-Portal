@@ -28,28 +28,36 @@ export const getBoatById = async (id: number): Promise<Boat> => {
   return res.data
 }
 
-export async function createBoat(payload: {
+export type CreateBoatPayload = {
+  stockNumber?: number
+  condition: string
   status: number
-  boatType: string
-  classCode: string
+  boatType: number
+  classCode: number
   make: string
-  model: string
+  model?: string
   boatYear: number
   price: number
+  currency: string
   length: number
-  beamFt: number
-  draftFt: number
-  weight: number
-  engine: string
-  numEngines: number
-  hp: number
-  drive: string
-  hours: number
-  fuelType: string
-  description: string
+  beamFt?: number
+  draftFt?: number
+
+  // OPTIONAL but sendable
+  weight?: number
+  engine?: string
+  numEngines?: number
+  hp?: number
+  drive?: string
+  hours?: number
+  fuelType?: string
+
+  description?: string
   cityID: number
-}) {
-  const res = await api.post("/api/boats", payload, {
+}
+
+export async function createBoat(payload: CreateBoatPayload) {
+    const res = await api.post("/api/boats", payload, {
     headers: AUTH_HEADER,
   })
   return res.data
