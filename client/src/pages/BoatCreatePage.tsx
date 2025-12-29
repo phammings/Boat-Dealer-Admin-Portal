@@ -54,16 +54,12 @@ export default function BoatCreatePage() {
     handleSubmit,
     control,
     register,
-    watch,
-    setValue,
     reset,
     formState: { errors },
   } = useForm({
     shouldFocusError: true,
     mode: "onSubmit"
   })
-
-  const selectedCategory = watch("boatType")
 
 // Load everything in one place
 useEffect(() => {
