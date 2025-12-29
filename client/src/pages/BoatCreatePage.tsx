@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation, useParams } from "react-router-dom"
 import { useForm, Controller } from "react-hook-form"
-import { createBoat } from "../api/boats.api"
+import { createBoat, updateBoat, getBoatById } from "../api/boats.api"
 import { getBoatCategories, getClassesByCategory } from "../api/lookup.api"
 import type { VehicleCategory, VehicleClass } from "../types/Lookup"
 import { Button } from "@/components/ui/button"
@@ -43,50 +43,78 @@ export default function BoatCreatePage() {
   const [categories, setCategories] = useState<VehicleCategory[]>([])
   const [classes, setClasses] = useState<VehicleClass[]>([])
 
+  const location = useLocation();
+  const params = useParams<{ id: string }>();
+
+  // Failsafe: first check state, fallback to URL param
+  const boatID =
+    (location.state as { boatID?: number })?.boatID ?? Number(params.id);
+
   const {
     handleSubmit,
     control,
     register,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     shouldFocusError: true,
-    mode: "onSubmit",
+    mode: "onSubmit"
   })
 
   const selectedCategory = watch("boatType")
 
-  /* -------- load categories -------- */
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const data = await getBoatCategories(1)
-        setCategories(data)
-      } catch {
-        toast.error("Failed to load boat types")
-      }
+// Load everything in one place
+useEffect(() => {
+  async function loadAll() {
+    try {
+      const categoriesData = await getBoatCategories(1)
+      setCategories(categoriesData)
+
+      if (!boatID) return
+
+      const boatData = await getBoatById(boatID)
+      const boatType = Number(boatData.boatType)
+
+      const classData = await getClassesByCategory(boatType)
+      setClasses(classData)
+
+      reset({
+        listingType: boatData.listingType,
+        stockNumber: boatData.stockNumber,
+        condition: boatData.condition,
+        status: boatData.status.toString(),
+        boatType: boatData.boatType.toString(),
+        classCode: boatData.classCode?.toString(),
+        make: boatData.make,
+        model: boatData.model,
+        boatYear: boatData.boatYear,
+        lengthFt: boatData.lengthFt,
+        lengthIn: boatData.lengthIn,
+        beamFt: boatData.beamFt,
+        beamIn: boatData.beamIn,
+        draftFt: boatData.draftFt,
+        draftIn: boatData.draftIn,
+        price: boatData.price,
+        currency: boatData.currency || "CAD",
+        cityID: boatData.cityID,
+        description: boatData.description,
+        engine: boatData.engine,
+        numEngines: boatData.numEngines?.toString(),
+        hp: boatData.hp,
+        drive: boatData.drive,
+        hours: boatData.hours,
+        fuelType: boatData.fuelType,
+      })
+    } catch (err) {
+      toast.error("Failed to load boat data")
+      console.error(err)
     }
-    loadCategories()
-  }, [])
+  }
 
-  /* -------- load classes -------- */
-  useEffect(() => {
-    if (!selectedCategory) return
-
-    async function loadClasses() {
-      try {
-        setClasses([])
-        setValue("classCode", "")
-        const data = await getClassesByCategory(Number(selectedCategory))
-        setClasses(data)
-      } catch {
-        toast.error("Failed to load classes")
-      }
-    }
-
-    loadClasses()
-  }, [selectedCategory, setValue])
+  loadAll()
+}, [boatID, reset])
 
   const selectClass = "w-full h-10 px-3 py-2 text-sm font-normal border !border-input rounded !bg-background focus:outline-none focus:ring-1 focus:ring-ring"
 
@@ -95,41 +123,58 @@ export default function BoatCreatePage() {
     setLoading(true)
 
     try {
-      const createdBoat = await createBoat({
-        listingType: data.listingType,
-        stockNumber: data.stockNumber,
-        condition: data.condition,
-        status: Number(data.status),
-        boatType: Number(data.boatType),
-        classCode: Number(data.classCode),
-        make: data.make,
-        model: data.model,
-        boatYear: Number(data.boatYear),
-        lengthFt: data.lengthFt,
-        price: Number(data.price),
-        currency: data.currency,
-        cityID: Number(data.cityID),
-        description: data.description,
+        if (boatID) {
+        await updateBoat({
+          ...data,
+          boatID: boatID,
+          status: Number(data.status),
+          boatType: Number(data.boatType),
+          classCode: Number(data.classCode),
+          boatYear: Number(data.boatYear),
+          price: Number(data.price),
+          cityID: Number(data.cityID),
+          numEngines: data.numEngines ? Number(data.numEngines) : undefined,
+          hp: data.hp ? Number(data.hp) : undefined,
+        })
+        toast.success("Boat updated successfully")
+        navigate(`/boats/${boatID}`)
+        } else {
+        const createdBoat = await createBoat({
+            listingType: data.listingType,
+            stockNumber: data.stockNumber,
+            condition: data.condition,
+            status: Number(data.status),
+            boatType: Number(data.boatType),
+            classCode: Number(data.classCode),
+            make: data.make,
+            model: data.model,
+            boatYear: Number(data.boatYear),
+            lengthFt: data.lengthFt,
+            price: Number(data.price),
+            currency: data.currency,
+            cityID: Number(data.cityID),
+            description: data.description,
 
-        // optional
-        lengthIn: data.lengthIn || undefined,
-        beamFt: data.beamFt || undefined,
-        beamIn: data.beamIn || undefined,
-        draftFt: data.draftFt || undefined,
-        draftIn: data.draftIn || undefined,
-        weight: data.weight ? Number(data.weight) : undefined,
-        engine: data.engine || undefined,
-        numEngines: data.numEngines ? Number(data.numEngines) : undefined,
-        hp: data.hp ? Number(data.hp) : undefined,
-        drive: data.drive || undefined,
-        hours: data.hours ? Number(data.hours) : undefined,
-        fuelType: data.fuelType || undefined,
-      })
+            // optional
+            lengthIn: data.lengthIn || undefined,
+            beamFt: data.beamFt || undefined,
+            beamIn: data.beamIn || undefined,
+            draftFt: data.draftFt || undefined,
+            draftIn: data.draftIn || undefined,
+            weight: data.weight ? Number(data.weight) : undefined,
+            engine: data.engine || undefined,
+            numEngines: data.numEngines ? Number(data.numEngines) : undefined,
+            hp: data.hp ? Number(data.hp) : undefined,
+            drive: data.drive || undefined,
+            hours: data.hours ? Number(data.hours) : undefined,
+            fuelType: data.fuelType || undefined,
+        })
 
-      toast.success("Boat created successfully")
-      navigate(`/create/photos/${createdBoat.boatID}`, {
-        state: { boatID: createdBoat.boatID },
-      })
+        toast.success("Boat created successfully")
+        navigate(`/create/photos/${createdBoat.boatID}`, {
+            state: { boatID: createdBoat.boatID },
+        })
+        }
     } finally {
       setLoading(false)
     }

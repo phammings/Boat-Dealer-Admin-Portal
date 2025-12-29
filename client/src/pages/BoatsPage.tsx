@@ -59,7 +59,7 @@ export default function BoatsPage() {
         boats={boats}
         loading={loading}
         onView={(id) => navigate(`/view/${id}`)}
-        onEdit={(id) => navigate(`/edit/${id}`)}
+        onEdit={(id) => navigate(`/edit/details/${id}`, { state: { boatID: id } })}
         onDelete={handleDelete}
       />
     </div>

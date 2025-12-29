@@ -66,6 +66,47 @@ export async function createBoat(payload: CreateBoatPayload) {
   return res.data
 }
 
+export type UpdateBoatPayload = {
+  boatID: number
+  listingType: string
+  stockNumber: string
+  condition: string
+  status: number
+  boatType: number
+  classCode: number
+  make: string
+  model: string
+  boatYear: number
+  price: number
+  currency: string
+  lengthFt: number
+  description: string
+  cityID: number
+
+  // OPTIONAL
+  lengthIn?: number
+  beamFt?: number
+  beamIn?: number
+  draftFt?: number
+  draftIn?: number
+  weight?: number
+  engine?: string
+  numEngines?: number
+  hp?: number
+  drive?: string
+  hours?: number
+  fuelType?: string
+}
+
+export async function updateBoat(payload: UpdateBoatPayload) {
+  const { boatID, ...rest } = payload
+  const res = await api.put(`/api/boats/${boatID}`, rest, {
+    headers: AUTH_HEADER,
+  })
+  return res.data
+}
+
+
 
 export interface PresignedRequestPayload {
   boatID: number;

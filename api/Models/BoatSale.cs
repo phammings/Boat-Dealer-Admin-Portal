@@ -18,18 +18,18 @@ namespace BoatAdminApi.Models
         public int? SellerID { get; set; }
 
         [MaxLength(50)]
-        public string? BoatType { get; set; }
+        public required string BoatType { get; set; }
 
         [MaxLength(50)]
-        public string? Make { get; set; }
+        public required string Make { get; set; }
 
         [MaxLength(50)]
-        public string? Model { get; set; }
+        public required string Model { get; set; }
 
-        public string? Description { get; set; }
-        public int? Length { get; set; }
+        public required string Description { get; set; }
+        public required int Length { get; set; }
         public int? LengthIn { get; set; }
-        public decimal? Price { get; set; }
+        public required decimal Price { get; set; }
         public int? BoatYear { get; set; }
 
         public ListingType ListingType { get; set; }
@@ -56,7 +56,7 @@ namespace BoatAdminApi.Models
 
         public bool AllStates { get; set; }
         [MaxLength(5)]
-        public string? ClassCode { get; set; }
+        public required string ClassCode { get; set; }
         [NotMapped]
         public string? Class => VehicleClass?.Name;
         
@@ -79,7 +79,7 @@ namespace BoatAdminApi.Models
         public double? BoatLongitude { get; set; }
         public int OwnerUserId { get; set; }
         public bool? LocationChanged { get; set; }
-        public int? CityID { get; set; }
+        public required int CityID { get; set; }
         public decimal? SearchPrice { get; set; }
         public int PriceType { get; set; }
         public DateTime? LastModified { get; set; }

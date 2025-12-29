@@ -19,10 +19,63 @@ namespace BoatAdminApi.Services
             return _repo.GetBoatsByDealerAsync(dealerId);
         }
 
-        public Task<BoatSale?> GetBoatAsync(int dealerId, int boatId)
+        public async Task<BoatDTO?> GetBoatAsync(int dealerId, int boatId)
         {
-            return _repo.GetBoatByIdAsync(dealerId, boatId);
+            var boat = await _repo.GetBoatByIdAsync(dealerId, boatId);
+            if (boat == null) return null;
+
+            // ---- Price handling ----
+            decimal price = 0;
+            if (boat.PriceType == 0)
+                price = boat.Price;
+            else if (boat.PriceType == 1)
+                price = boat.PriceUS! ?? 0;
+
+            // ---- Lookup Class & BoatType from repo ----
+            var vehicleClass = await _repo.GetVehicleClassByCodeAsync(boat.ClassCode)
+                ?? throw new ArgumentException("Invalid VehicleClass code in DB");
+
+            var boatType = await _repo.GetBoatTypeByCodeAsync(boat.BoatType)
+                ?? throw new ArgumentException("Invalid BoatType code in DB");
+
+            return new BoatDTO
+            {
+                BoatID = boat.BoatID,
+                ListingType = boat.ListingType.ToString(),
+                StockNumber = boat.StockNum ?? "",
+                Condition = (boat.New ?? true) ? "New" : "Used",
+                Status = (int)boat.Status,
+
+                BoatType = boatType.VehicleCategoryID,
+                ClassCode = vehicleClass.VehicleClassID,
+
+                Make = boat.Make,
+                Model = boat.Model,
+                BoatYear = boat.BoatYear ?? 0,
+
+                Price = price,
+                Currency = boat.PriceType == 0 ? "CAD" : "USD",
+
+                LengthFt = boat.Length,
+                LengthIn = boat.LengthIn,
+                BeamFt = boat.BeamFt,
+                BeamIn = boat.BeamIn,
+                DraftFt = boat.DraftFt,
+                DraftIn = boat.DraftIn,
+                Weight = boat.Weight,
+
+                Engine = boat.Engine,
+                NumEngines = boat.NumEngines,
+                HP = boat.HP,
+                Drive = boat.Drive?.ToString(),
+                Hours = boat.Hours,
+                FuelType = boat.FuelType?.ToString() ?? "N/A",
+
+                Description = boat.Description,
+                CityID = boat.CityID
+            };
         }
+
 
         public async Task<BoatSale> CreateBoatAsync(int dealerId, BoatCreateDTO req)
         {

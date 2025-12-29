@@ -87,6 +87,19 @@ namespace BoatAdminApi.Repositories
             return await _context.VehicleCategories
                 .FirstOrDefaultAsync(bt => bt.VehicleCategoryID == boatTypeId);
         }
+
+        public async Task<VehicleClass?> GetVehicleClassByCodeAsync(string code)
+        {
+            return await _context.VehicleClasses
+                .FirstOrDefaultAsync(vc => vc.Code == code);
+        }
+
+        public async Task<VehicleCategory?> GetBoatTypeByCodeAsync(string code)
+        {
+            return await _context.VehicleCategories
+                .FirstOrDefaultAsync(bt => bt.Code == code);
+        }
+
         
     }
 }
