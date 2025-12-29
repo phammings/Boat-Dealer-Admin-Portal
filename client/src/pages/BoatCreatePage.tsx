@@ -391,10 +391,16 @@ export default function BoatCreatePage() {
                   <Input
                     placeholder="in"
                     type="number"
-                    {...register("lengthIn", { min: 0, max: 11 })}
+                    className={errors.lengthIn ? errorClass : ""}
+                    {...register("lengthIn", {
+                        valueAsNumber: true,          // ensures comparison is numeric
+                        min: { value: 0, message: "Inches cannot be below 0" },
+                        max: { value: 11, message: "Inches cannot be above 11" },
+                    })}
                   />
                 </div>
                 <FieldError error={errors.lengthFt?.message as string} />
+                <FieldError error={errors.lengthIn?.message as string} />
               </div>
 
               {/* BEAM */}
@@ -405,8 +411,14 @@ export default function BoatCreatePage() {
                   <Input
                     placeholder="in"
                     type="number"
-                    {...register("beamIn", { min: 0, max: 11 })}
+                    className={errors.beamIn ? errorClass : ""}
+                    {...register("beamIn", {
+                        valueAsNumber: true,          // ensures comparison is numeric
+                        min: { value: 0, message: "Inches be below 0" },
+                        max: { value: 11, message: "Inches be above 11" },
+                    })}
                   />
+                  <FieldError error={errors.beamIn?.message as string} />
                 </div>
               </div>
 
@@ -418,8 +430,14 @@ export default function BoatCreatePage() {
                   <Input
                     placeholder="in"
                     type="number"
-                    {...register("draftIn", { min: 0, max: 11 })}
+                    className={errors.draftIn ? errorClass : ""}
+                    {...register("draftIn", {
+                        valueAsNumber: true,          // ensures comparison is numeric
+                        min: { value: 0, message: "Inches be below 0" },
+                        max: { value: 11, message: "Inches cannot be above 11" },
+                    })}
                   />
+                  <FieldError error={errors.draftIn?.message as string} />
                 </div>
               </div>
 
