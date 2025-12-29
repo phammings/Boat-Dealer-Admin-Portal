@@ -30,37 +30,22 @@ namespace BoatAdminApi.Services
             decimal priceCAD = 0;
             decimal priceUSD = 0;
             int priceType = 0;
-            bool condition = true;
+            bool condition = req.Condition == "New" ? true :
+                            req.Condition == "Used" ? false :
+                            throw new ArgumentException("Invalid condition value");
 
-            if (req.condition == "New")
-            {
-                condition = true;
-            }
-            else if (req.condition == "Used")
-            {
-                condition = false;
-            }
-            else
-            {
-                throw new ArgumentException("Invalid condition value");
-            }
-
-            if (req.currency == "CAD") // CAD
-            {
+            if (req.Currency == "CAD")
                 priceCAD = req.Price;
-                priceUSD = 0;
-                priceType = 0;
-            }
-            else if (req.currency == "USD") // USD
-            {
+            else if (req.Currency == "USD")
                 priceUSD = req.Price;
-                priceCAD = 0;
-                priceType = 1;
-            }
             else
-            {
                 throw new ArgumentException("Invalid currency value");
-            }
+
+            // ---- Lookup Class & BoatType from repo ----
+            var vehicleClass = await _repo.GetVehicleClassByIdAsync(req.ClassCode)
+                ?? throw new ArgumentException("Invalid VehicleClassID");
+            var boatType = await _repo.GetBoatTypeByIdAsync(req.BoatType)
+                ?? throw new ArgumentException("Invalid BoatTypeID");
 
             // ---- Map DTO → Entity ----
             var boat = new BoatSale
@@ -69,13 +54,13 @@ namespace BoatAdminApi.Services
 
                 // Listing
                 ListingType = Enum.Parse<ListingType>(req.ListingType),
-                StockNum = req.stockNumber,
+                StockNum = req.StockNumber,
                 New = condition,
                 Status = (BoatStatus)req.Status,
 
                 // Classification
-                BoatType = req.BoatType,
-                ClassCode = req.ClassCode,
+                BoatType = boatType.Code,       // Persist code
+                ClassCode = vehicleClass.Code,  // Persist code
 
                 // Identity
                 Make = req.Make,
@@ -91,12 +76,11 @@ namespace BoatAdminApi.Services
 
                 // Dimensions
                 Length = req.LengthFt,
-                LengthIn= req.LengthIn,
+                LengthIn = req.LengthIn,
                 BeamFt = req.BeamFt,
                 BeamIn = req.BeamIn,
                 DraftFt = req.DraftFt,
                 DraftIn = req.DraftIn,
-
                 Weight = req.Weight,
 
                 // Engine
@@ -114,57 +98,39 @@ namespace BoatAdminApi.Services
                 // Description / Location
                 Description = req.Description,
                 CityID = req.CityID!.Value,
-                // BoatCity = req.BoatCity,
-                // BoatProvince = req.BoatProvince,
-                // BoatCountry = req.BoatCountry,
 
                 // System
                 Active = true,
                 Hide = false,
                 PostedDate = DateTime.UtcNow,
                 LastModified = DateTime.UtcNow
-                };
+            };
 
-                return await _repo.CreateBoatAsync(boat);
-            }
+            return await _repo.CreateBoatAsync(boat);
+        }
 
 
         public async Task UpdateBoatAsync(int dealerId, BoatEditDTO req)
         {
-            var boat = await _repo.GetBoatByIdAsync(dealerId, req.BoatID);
-            if (boat == null)
-                throw new Exception("Boat not found");
+            var boat = await _repo.GetBoatByIdAsync(dealerId, req.BoatID)
+                ?? throw new Exception("Boat not found");
 
-            // ---- Condition handling ----
-            bool condition;
-            if (req.Condition == "New")
-                condition = true;
-            else if (req.Condition == "Used")
-                condition = false;
-            else
-                throw new ArgumentException("Invalid condition value");
+            bool condition = req.Condition == "New" ? true :
+                            req.Condition == "Used" ? false :
+                            throw new ArgumentException("Invalid condition value");
 
-            // ---- Price handling ----
-            decimal priceCAD = 0;
-            decimal priceUSD = 0;
-            int priceType;
+            decimal priceCAD = 0, priceUSD = 0;
+            int priceType = 0;
 
-            if (req.Currency == "CAD")
-            {
-                priceCAD = req.Price;
-                priceUSD = 0;
-                priceType = 0;
-            }
-            else if (req.Currency == "USD")
-            {
-                priceUSD = req.Price;
-                priceCAD = 0;
-                priceType = 1;
-            }
-            else
-            {
-                throw new ArgumentException("Invalid currency value");
-            }
+            if (req.Currency == "CAD") priceCAD = req.Price;
+            else if (req.Currency == "USD") priceUSD = req.Price;
+            else throw new ArgumentException("Invalid currency value");
+
+            // ---- Lookup Class & BoatType from repo ----
+            var vehicleClass = await _repo.GetVehicleClassByIdAsync(req.ClassCode)
+                ?? throw new ArgumentException("Invalid VehicleClassID");
+            var boatType = await _repo.GetBoatTypeByIdAsync(req.BoatType)
+                ?? throw new ArgumentException("Invalid BoatTypeID");
 
             // ---- Map DTO → Entity ----
             boat.ListingType = Enum.Parse<ListingType>(req.ListingType);
@@ -172,23 +138,19 @@ namespace BoatAdminApi.Services
             boat.New = condition;
             boat.Status = (BoatStatus)req.Status;
 
-            // Classification
-            boat.BoatType = req.BoatType;
-            boat.ClassCode = req.ClassCode;
+            boat.BoatType = boatType.Code;
+            boat.ClassCode = vehicleClass.Code;
 
-            // Identity
             boat.Make = req.Make;
             boat.Model = req.Model;
             boat.BoatYear = req.BoatYear;
             boat.NormalMake = req.Make?.Replace(" ", "").Trim().ToUpperInvariant();
             boat.NormalModel = req.Model?.Replace(" ", "").Trim().ToUpperInvariant();
 
-            // Pricing
             boat.Price = priceCAD;
             boat.PriceUS = priceUSD;
             boat.PriceType = priceType;
 
-            // Dimensions
             boat.Length = req.LengthFt;
             boat.LengthIn = req.LengthIn;
             boat.BeamFt = req.BeamFt;
@@ -197,7 +159,6 @@ namespace BoatAdminApi.Services
             boat.DraftIn = req.DraftIn;
             boat.Weight = req.Weight;
 
-            // Engine
             boat.Engine = req.Engine;
             boat.NumEngines = req.NumEngines;
             boat.HP = req.HP;
@@ -209,11 +170,9 @@ namespace BoatAdminApi.Services
                 ? FuelType.None
                 : Enum.Parse<FuelType>(req.FuelType);
 
-            // Description / Location
             boat.Description = req.Description;
             boat.CityID = req.CityID!.Value;
 
-            // System
             boat.LastModified = DateTime.UtcNow;
 
             await _repo.UpdateBoatAsync(boat);

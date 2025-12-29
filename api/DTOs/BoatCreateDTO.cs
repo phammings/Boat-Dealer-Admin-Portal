@@ -10,17 +10,17 @@ namespace BoatAdminApi.DTOs
         [Required]
         public required string ListingType { get; set; }
         [Required]
-        public required string stockNumber { get; set; }
+        public required string StockNumber { get; set; }
         [Required]
-        public required string condition { get; set; }
+        public required string Condition { get; set; }
         [Required]
         public required int Status { get; set; }
 
         [Required]
-        public required string BoatType { get; set; }
+        public required int BoatType { get; set; }
 
         [Required]
-        public required string ClassCode { get; set; }
+        public required int ClassCode { get; set; }
 
         [Required]
         public required string Make { get; set; }
@@ -33,7 +33,7 @@ namespace BoatAdminApi.DTOs
         [Required]
         public required decimal Price { get; set; }
         [Required]
-        public required string currency { get; set; }
+        public required string Currency { get; set; }
 
         [Required]
         public int LengthFt { get; set; }

@@ -21,10 +21,10 @@ namespace BoatAdminApi.DTOs
         public required int Status { get; set; }
 
         [Required]
-        public required string BoatType { get; set; }
+        public required int BoatType { get; set; }
 
         [Required]
-        public required string ClassCode { get; set; }
+        public required int ClassCode { get; set; }
 
         [Required]
         public required string Make { get; set; }

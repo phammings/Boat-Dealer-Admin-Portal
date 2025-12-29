@@ -75,6 +75,18 @@ namespace BoatAdminApi.Repositories
             boat.LastModified = DateTime.UtcNow; 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<VehicleClass?> GetVehicleClassByIdAsync(int vehicleClassId)
+        {
+            return await _context.VehicleClasses
+                .FirstOrDefaultAsync(vc => vc.VehicleClassID == vehicleClassId);
+        }
+
+        public async Task<VehicleCategory?> GetBoatTypeByIdAsync(int boatTypeId)
+        {
+            return await _context.VehicleCategories
+                .FirstOrDefaultAsync(bt => bt.VehicleCategoryID == boatTypeId);
+        }
         
     }
 }

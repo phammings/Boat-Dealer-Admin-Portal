@@ -10,5 +10,7 @@ namespace BoatAdminApi.Repositories
         Task<BoatSale> CreateBoatAsync(BoatSale boat);
         Task UpdateBoatAsync(BoatSale boat);
         Task SetActiveStatusAsync(int dealerId, int boatId, bool active);
+        Task<VehicleClass?> GetVehicleClassByIdAsync(int vehicleClassId);
+        Task<VehicleCategory?> GetBoatTypeByIdAsync(int boatTypeId);
     }
 }
