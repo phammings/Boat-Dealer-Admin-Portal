@@ -95,6 +95,7 @@ useEffect(() => {
         beamIn: boatData.beamIn,
         draftFt: boatData.draftFt,
         draftIn: boatData.draftIn,
+        weight: boatData.weight,
         price: boatData.price,
         currency: boatData.currency || "CAD",
         cityID: boatData.cityID,
@@ -437,68 +438,142 @@ useEffect(() => {
 
               {/* LENGTH */}
               <div>
-                <RequiredLabel>Length</RequiredLabel>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="ft"
+            <RequiredLabel>Length</RequiredLabel>
+
+            <div className="flex gap-2">
+                {/* ft */}
+                <div className="relative w-full">
+                <Input
                     type="number"
                     {...register("lengthFt", { required: "Length required" })}
-                    className={errors.lengthFt ? errorClass : ""}
                     disabled={initialLoading}
-                  />
-                  <Input
-                    placeholder="in"
+                    className={`pr-10 w-full ${errors.lengthFt ? errorClass : ""}`}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                    ft
+                </span>
+                </div>
+
+                {/* in */}
+                <div className="relative w-full">
+                <Input
                     type="number"
-                    className={errors.lengthIn ? errorClass : ""}
                     {...register("lengthIn", {
-                        valueAsNumber: true,          // ensures comparison is numeric
-                        min: { value: 0, message: "Inches cannot be below 0" },
-                        max: { value: 11, message: "Inches cannot be above 11" },
+                    valueAsNumber: true,
+                    min: { value: 0, message: "Inches cannot be below 0" },
+                    max: { value: 11, message: "Inches cannot be above 11" },
                     })}
                     disabled={initialLoading}
-                  />
+                    className={`pr-10 w-full ${errors.lengthIn ? errorClass : ""}`}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                    in
+                </span>
                 </div>
-                <FieldError error={errors.lengthFt?.message as string} />
-                <FieldError error={errors.lengthIn?.message as string} />
-              </div>
+            </div>
+
+            <FieldError error={errors.lengthFt?.message as string} />
+            <FieldError error={errors.lengthIn?.message as string} />
+            </div>
+
 
               {/* BEAM */}
               <div>
                 <Label>Beam</Label>
+
                 <div className="flex gap-2">
-                  <Input placeholder="ft" type="number" {...register("beamFt")} disabled={initialLoading} />
-                  <Input
-                    placeholder="in"
-                    type="number"
-                    className={errors.beamIn ? errorClass : ""}
-                    {...register("beamIn", {
-                        valueAsNumber: true,          // ensures comparison is numeric
-                        min: { value: 0, message: "Inches be below 0" },
-                        max: { value: 11, message: "Inches be above 11" },
-                    })}
-                    disabled={initialLoading}
-                  />
-                  <FieldError error={errors.beamIn?.message as string} />
+                    {/* ft */}
+                    <div className="relative w-full">
+                    <Input
+                        type="number"
+                        {...register("beamFt")}
+                        disabled={initialLoading}
+                        className="pr-10 w-full"
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                        ft
+                    </span>
+                    </div>
+
+                    {/* in */}
+                    <div className="relative w-full">
+                    <Input
+                        type="number"
+                        {...register("beamIn", {
+                        valueAsNumber: true,
+                        min: { value: 0, message: "Inches cannot be below 0" },
+                        max: { value: 11, message: "Inches cannot be above 11" },
+                        })}
+                        disabled={initialLoading}
+                        className={`pr-10 w-full ${errors.beamIn ? errorClass : ""}`}
+                    />
+                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                        in
+                    </span>
+                    </div>
                 </div>
-              </div>
+
+                <FieldError error={errors.beamIn?.message as string} />
+                </div>
+
 
               {/* DRAFT */}
               <div>
-                <Label>Draft</Label>
-                <div className="flex gap-2">
-                  <Input placeholder="ft" type="number" {...register("draftFt")} />
-                  <Input
-                    placeholder="in"
+            <Label>Draft</Label>
+
+            <div className="flex gap-2">
+                {/* ft */}
+                <div className="relative w-full">
+                <Input
                     type="number"
-                    className={errors.draftIn ? errorClass : ""}
+                    {...register("draftFt")}
+                    disabled={initialLoading}
+                    className="pr-10 w-full"
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                    ft
+                </span>
+                </div>
+
+                {/* in */}
+                <div className="relative w-full">
+                <Input
+                    type="number"
                     {...register("draftIn", {
-                        valueAsNumber: true,          // ensures comparison is numeric
-                        min: { value: 0, message: "Inches be below 0" },
-                        max: { value: 11, message: "Inches cannot be above 11" },
+                    valueAsNumber: true,
+                    min: { value: 0, message: "Inches cannot be below 0" },
+                    max: { value: 11, message: "Inches cannot be above 11" },
                     })}
                     disabled={initialLoading}
-                  />
-                  <FieldError error={errors.draftIn?.message as string} />
+                    className={`pr-10 w-full ${errors.draftIn ? errorClass : ""}`}
+                />
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                    in
+                </span>
+                </div>
+            </div>
+
+            <FieldError error={errors.draftIn?.message as string} />
+            </div>
+
+
+              {/* WEIGHT */}
+              <div>
+                <Label>Weight</Label>
+                <div className="flex gap-2">
+                  <div className="relative w-full">
+                    <Input
+                        type="number"
+                        {...register("weight")}
+                        disabled={initialLoading}
+                        className="pr-12"   // space for unit
+                    />
+
+                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground">
+                        lbs
+                    </span>
+                    </div>
+                  <FieldError error={errors.weight?.message as string} />
                 </div>
               </div>
 
