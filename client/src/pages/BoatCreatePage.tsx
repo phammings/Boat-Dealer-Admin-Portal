@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Select,
   SelectContent,
@@ -20,19 +21,13 @@ import {
 import { toast } from "react-toastify"
 import { BoatStatus } from "../enums/enums"
 import { BoatFormStepper } from "@/components/BoatFormStepper"
+import { FieldError, RequiredLabel } from "@/components/Errors"
+import { GridSkeleton } from "@/components/Skeletons"
 // import CityAutocomplete from "@/components/CityAutocomplete"
 
 /* ---------------- helpers ---------------- */
 
-const RequiredLabel = ({ children }: { children: string }) => (
-  <Label>
-    {children} <span className="text-red-500">*</span>
-  </Label>
-)
-
-const FieldError = ({ error }: { error?: string }) =>
-  error ? <p className="text-sm text-red-500 mt-1">{error}</p> : null
-
+const selectClass = "w-full h-10 px-3 py-2 text-sm font-normal border !border-input rounded !bg-background focus:outline-none focus:ring-1 focus:ring-ring"
 const errorClass = "!border-red-500 !focus:ring-red-500"
 
 /* ---------------- component ---------------- */
@@ -43,12 +38,15 @@ export default function BoatCreatePage() {
   const [categories, setCategories] = useState<VehicleCategory[]>([])
   const [classes, setClasses] = useState<VehicleClass[]>([])
 
+
   const location = useLocation();
   const params = useParams<{ id: string }>();
 
   // Failsafe: first check state, fallback to URL param
   const boatID =
     (location.state as { boatID?: number })?.boatID ?? Number(params.id);
+
+    const [initialLoading, setInitialLoading] = useState<boolean>(!!boatID)
 
   const {
     handleSubmit,
@@ -65,10 +63,15 @@ export default function BoatCreatePage() {
 useEffect(() => {
   async function loadAll() {
     try {
+      setInitialLoading(true)
+
       const categoriesData = await getBoatCategories(1)
       setCategories(categoriesData)
 
-      if (!boatID) return
+      if (!boatID) {
+        setInitialLoading(false)
+        return
+      }
 
       const boatData = await getBoatById(boatID)
       const boatType = Number(boatData.boatType)
@@ -106,13 +109,13 @@ useEffect(() => {
     } catch (err) {
       toast.error("Failed to load boat data")
       console.error(err)
+    } finally {
+        setInitialLoading(false)
     }
   }
 
   loadAll()
 }, [boatID, reset])
-
-  const selectClass = "w-full h-10 px-3 py-2 text-sm font-normal border !border-input rounded !bg-background focus:outline-none focus:ring-1 focus:ring-ring"
 
   /* -------- submit -------- */
   const onSubmit = async (data: any) => {
@@ -192,6 +195,9 @@ useEffect(() => {
           <section>
             <h3 className="font-semibold mb-4">Listing Info</h3>
             <Separator />
+            {initialLoading ? (
+            <GridSkeleton count={3} />
+            ) : (
             <div className="grid md:grid-cols-3 gap-4 pt-6">
               {/* LISTING TYPE */}
               <div>
@@ -237,6 +243,7 @@ useEffect(() => {
                     },
                   })}
                   className={errors.stockNumber ? errorClass : ""}
+                  disabled={initialLoading}
                 />
                 <FieldError
                   error={errors.stockNumber?.message as string}
@@ -273,13 +280,19 @@ useEffect(() => {
                 />
               </div>
             </div>
+            )}
           </section>
+
 
           {/* Boat Details */}
           <section>
             <h3 className="font-semibold mb-4">Boat Details</h3>
             <Separator />
+            {initialLoading ? (
+            <GridSkeleton count={12} />
+            ) : (
             <div className="grid md:grid-cols-3 gap-4 pt-6">
+
               {/* STATUS */}
               <div>
                 <RequiredLabel>Status</RequiredLabel>
@@ -393,6 +406,7 @@ useEffect(() => {
                 <Input
                   {...register("make", { required: "Make required" })}
                   className={errors.make ? errorClass : ""}
+                  disabled={initialLoading}
                 />
                 <FieldError error={errors.make?.message as string} />
               </div>
@@ -404,6 +418,7 @@ useEffect(() => {
                   type="string"
                   {...register("model", { required: "Model required" })}
                   className={errors.model ? errorClass : ""}
+                  disabled={initialLoading}
                 />
                 <FieldError error={errors.model?.message as string} />
               </div>
@@ -415,6 +430,7 @@ useEffect(() => {
                   type="number"
                   {...register("boatYear", { required: "Year required" })}
                   className={errors.boatYear ? errorClass : ""}
+                  disabled={initialLoading}
                 />
                 <FieldError error={errors.boatYear?.message as string} />
               </div>
@@ -428,6 +444,7 @@ useEffect(() => {
                     type="number"
                     {...register("lengthFt", { required: "Length required" })}
                     className={errors.lengthFt ? errorClass : ""}
+                    disabled={initialLoading}
                   />
                   <Input
                     placeholder="in"
@@ -438,6 +455,7 @@ useEffect(() => {
                         min: { value: 0, message: "Inches cannot be below 0" },
                         max: { value: 11, message: "Inches cannot be above 11" },
                     })}
+                    disabled={initialLoading}
                   />
                 </div>
                 <FieldError error={errors.lengthFt?.message as string} />
@@ -448,7 +466,7 @@ useEffect(() => {
               <div>
                 <Label>Beam</Label>
                 <div className="flex gap-2">
-                  <Input placeholder="ft" type="number" {...register("beamFt")} />
+                  <Input placeholder="ft" type="number" {...register("beamFt")} disabled={initialLoading} />
                   <Input
                     placeholder="in"
                     type="number"
@@ -458,6 +476,7 @@ useEffect(() => {
                         min: { value: 0, message: "Inches be below 0" },
                         max: { value: 11, message: "Inches be above 11" },
                     })}
+                    disabled={initialLoading}
                   />
                   <FieldError error={errors.beamIn?.message as string} />
                 </div>
@@ -477,6 +496,7 @@ useEffect(() => {
                         min: { value: 0, message: "Inches be below 0" },
                         max: { value: 11, message: "Inches cannot be above 11" },
                     })}
+                    disabled={initialLoading}
                   />
                   <FieldError error={errors.draftIn?.message as string} />
                 </div>
@@ -490,6 +510,7 @@ useEffect(() => {
                     type="number"
                     {...register("price", { required: "Price required" })}
                     className={errors.price ? errorClass : ""}
+                    disabled={initialLoading}
                   />
                   <Controller
                     name="currency"
@@ -522,13 +543,18 @@ useEffect(() => {
                 <FieldError error={errors.currency?.message as string} />
               </div>
             </div>
+            )}
           </section>
 
           {/* Engine Specs */}
         <section>
         <h3 className="font-semibold mb-4">Engine Specs</h3>
         <Separator />
-        <div className="grid md:grid-cols-3 gap-4 pt-6">
+        {initialLoading ? (
+  <GridSkeleton count={6} />
+) : (
+  <div className="grid md:grid-cols-3 gap-4 pt-6">
+
             {/* Engine */}
             <div>
             <Label>Engine</Label>
@@ -538,6 +564,7 @@ useEffect(() => {
                 placeholder="Engine type"
                 {...register("engine")}
                 className={errors.engine ? errorClass : ""}
+                disabled={initialLoading}
             />
             <FieldError error={errors.engine?.message as string} />
             </div>
@@ -576,6 +603,7 @@ useEffect(() => {
                 placeholder="Horsepower"
                 {...register("hp")}
                 className={errors.hp ? errorClass : ""}
+                disabled={initialLoading}
             />
             <FieldError error={errors.hp?.message as string} />
             </div>
@@ -615,6 +643,7 @@ useEffect(() => {
                 placeholder="Engine hours"
                 {...register("hours")}
                 className={errors.hours ? errorClass : ""}
+                disabled={initialLoading}
             />
             <FieldError error={errors.hours?.message as string} />
             </div>
@@ -642,6 +671,7 @@ useEffect(() => {
             <FieldError error={errors.fuelType?.message as string} />
             </div>
         </div>
+        )}
         </section>
 
 
@@ -657,38 +687,62 @@ useEffect(() => {
           <section>
             <h3 className="font-semibold mb-4">Location</h3>
             <Separator />
-            <div className="grid md:grid-cols-3 gap-4 pt-6">
-              <div>
-                <RequiredLabel>City</RequiredLabel>
-                <Input
-                  type="number"
-                  {...register("cityID", { required: "City required" })}
-                  className={errors.cityID ? errorClass : ""}
-                />
-                <FieldError error={errors.cityID?.message as string} />
-              </div>
-            </div>
+            {initialLoading ? (
+                <GridSkeleton count={1} />
+                ) : (
+                <div className="grid md:grid-cols-3 gap-4 pt-6">
+                    <div>
+                    <RequiredLabel>City</RequiredLabel>
+                    <Input
+                        type="number"
+                        {...register("cityID", { required: "City required" })}
+                        className={errors.cityID ? errorClass : ""}
+                        disabled={initialLoading}
+                    />
+                    <FieldError error={errors.cityID?.message as string} />
+                    </div>
+                </div>
+                )}
           </section>
 
           {/* Description */}
           <section>
-            <RequiredLabel>Description</RequiredLabel>
-            <Textarea
+            {initialLoading ? (
+            <div className="pt-4">
+                <Skeleton className="h-4 w-24 mb-2" />
+                <Skeleton className="h-28 w-full" />
+            </div>
+            ) : (
+            <>
+                <RequiredLabel>Description</RequiredLabel>
+                <Textarea
                 rows={4}
                 {...register("description", { required: "Description is required" })}
                 className={errors.description ? errorClass : ""}
-            />
-            <FieldError error={errors.description?.message as string} />
+                disabled={initialLoading}
+                />
+                <FieldError error={errors.description?.message as string} />
+            </>
+            )}
           </section>
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-              Cancel
+            <Button
+                type="button"
+                variant="outline"
+                disabled={initialLoading || loading}
+                onClick={() => navigate(-1)}
+            >
+                Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Boat"}
+
+            <Button
+                type="submit"
+                disabled={initialLoading || loading}
+            >
+                {loading ? "Saving..." : boatID ? "Update Boat" : "Create Boat"}
             </Button>
-          </div>
+            </div>
         </form>
       </CardContent>
     </Card>
