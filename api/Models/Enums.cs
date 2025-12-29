@@ -3,7 +3,9 @@ namespace BoatAdminApi.Enums
     public enum ListingType
     {
         Dealer,
-        Broker
+        Broker,
+        Concessionnaire,
+        Private
     }
 
     public enum BoatStatus

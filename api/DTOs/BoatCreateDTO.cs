@@ -10,11 +10,11 @@ namespace BoatAdminApi.DTOs
         [Required]
         public required string ListingType { get; set; }
         [Required]
-        public required int stockNumber { get; set; }
+        public required string stockNumber { get; set; }
         [Required]
         public required string condition { get; set; }
         [Required]
-        public int Status { get; set; }
+        public required int Status { get; set; }
 
         [Required]
         public required string BoatType { get; set; }
@@ -25,19 +25,27 @@ namespace BoatAdminApi.DTOs
         [Required]
         public required string Make { get; set; }
 
-        public string? Model { get; set; }
+        [Required]
+        public required string? Model { get; set; }
 
         [Required]
-        public int BoatYear { get; set; }
+        public required int BoatYear { get; set; }
+        [Required]
+        public required decimal Price { get; set; }
+        [Required]
+        public required string currency { get; set; }
+
+        [Required]
+        public int LengthFt { get; set; }
+
+        [Required]
+        public required string? Description { get; set; }
+
+        [Required]
+        public required int? CityID { get; set; }
 
         // OPTIONAL FIELDS
-        public decimal? Price { get; set; }
-        public int PriceType { get; set; }
-        public int? LengthIn { get; set; } // optional if needed
-
-        [Required]
-        public int Length { get; set; }
-
+        public int? LengthIn { get; set; }
         public int? BeamFt { get; set; }
         public int? BeamIn { get; set; }
         public int? DraftFt { get; set; }
@@ -53,9 +61,6 @@ namespace BoatAdminApi.DTOs
 
         public string? FuelType { get; set; }      // maps to FuelType enum
 
-        public string? Description { get; set; }
-
-        public int? CityID { get; set; }
 
         // REQUIRED (Dealer)
         [Required]

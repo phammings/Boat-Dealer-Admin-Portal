@@ -30,7 +30,7 @@ export const getBoatById = async (id: number): Promise<Boat> => {
 
 export type CreateBoatPayload = {
   listingType: string
-  stockNumber?: number
+  stockNumber: string
   condition: string
   status: number
   boatType: number

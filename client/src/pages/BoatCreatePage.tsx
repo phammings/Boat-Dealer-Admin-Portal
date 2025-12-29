@@ -112,11 +112,11 @@ export default function BoatCreatePage() {
         description: data.description,
 
         // optional
-        lengthIn: data.lengthIn,
-        beamFt: data.beamFt,
-        beamIn: data.beamIn,
-        draftFt: data.draftFt,
-        draftIn: data.draftIn,
+        lengthIn: data.lengthIn || undefined,
+        beamFt: data.beamFt || undefined,
+        beamIn: data.beamIn || undefined,
+        draftFt: data.draftFt || undefined,
+        draftIn: data.draftIn || undefined,
         weight: data.weight ? Number(data.weight) : undefined,
         engine: data.engine || undefined,
         numEngines: data.numEngines ? Number(data.numEngines) : undefined,
