@@ -8,6 +8,12 @@ namespace BoatAdminApi.DTOs
     {
         // REQUIRED
         [Required]
+        public required string ListingType { get; set; }
+        [Required]
+        public required int stockNumber { get; set; }
+        [Required]
+        public required string condition { get; set; }
+        [Required]
         public int Status { get; set; }
 
         [Required]

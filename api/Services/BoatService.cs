@@ -26,11 +26,6 @@ namespace BoatAdminApi.Services
 
         public async Task<BoatSale> CreateBoatAsync(int dealerId, BoatCreateDTO req)
         {
-            // Validate class exists
-            // var vehicleClass = await _repo.GetVehicleClassByCodeAsync(req.ClassCode);
-            // if (vehicleClass == null)
-            //     throw new Exception($"Vehicle class '{req.ClassCode}' does not exist.");
-
             // Map DTO to BoatSale entity
             var boat = new BoatSale
             {

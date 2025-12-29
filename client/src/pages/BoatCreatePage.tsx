@@ -33,7 +33,7 @@ const RequiredLabel = ({ children }: { children: string }) => (
 const FieldError = ({ error }: { error?: string }) =>
   error ? <p className="text-sm text-red-500 mt-1">{error}</p> : null
 
-const errorClass = "border-red-500 focus:ring-red-500"
+const errorClass = "!border-red-500 !focus:ring-red-500"
 
 /* ---------------- component ---------------- */
 
@@ -95,14 +95,8 @@ export default function BoatCreatePage() {
     setLoading(true)
 
     try {
-      const length =
-        Number(data.lengthFt) + Number(data.lengthIn || 0) / 12
-      const beam =
-        Number(data.beamFt || 0) + Number(data.beamIn || 0) / 12
-      const draft =
-        Number(data.draftFt || 0) + Number(data.draftIn || 0) / 12
-
       const createdBoat = await createBoat({
+        listingType: data.listingType,
         stockNumber: data.stockNumber,
         condition: data.condition,
         status: Number(data.status),
@@ -111,15 +105,18 @@ export default function BoatCreatePage() {
         make: data.make,
         model: data.model,
         boatYear: Number(data.boatYear),
-        length,
-        beamFt: beam,
-        draftFt: draft,
+        lengthFt: data.lengthFt,
         price: Number(data.price),
         currency: data.currency,
         cityID: Number(data.cityID),
         description: data.description,
 
         // optional
+        lengthIn: data.lengthIn,
+        beamFt: data.beamFt,
+        beamIn: data.beamIn,
+        draftFt: data.draftFt,
+        draftIn: data.draftIn,
         weight: data.weight ? Number(data.weight) : undefined,
         engine: data.engine || undefined,
         numEngines: data.numEngines ? Number(data.numEngines) : undefined,
@@ -175,6 +172,8 @@ export default function BoatCreatePage() {
                         <SelectContent>
                           <SelectItem value="Dealer">Dealer</SelectItem>
                           <SelectItem value="Broker">Broker</SelectItem>
+                          <SelectItem value="Concessionnaire">Concessionnaire</SelectItem>
+                          <SelectItem value="Private">Private</SelectItem>
                         </SelectContent>
                       </Select>
                       <FieldError
@@ -609,8 +608,13 @@ export default function BoatCreatePage() {
 
           {/* Description */}
           <section>
-            <h3 className="font-semibold mb-4">Description</h3>
-            <Textarea rows={4} {...register("description")} />
+            <RequiredLabel>Description</RequiredLabel>
+            <Textarea
+                rows={4}
+                {...register("description", { required: "Description is required" })}
+                className={errors.description ? errorClass : ""}
+            />
+            <FieldError error={errors.description?.message as string} />
           </section>
 
           <div className="flex justify-end gap-4">

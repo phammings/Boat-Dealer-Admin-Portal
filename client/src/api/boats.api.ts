@@ -29,6 +29,7 @@ export const getBoatById = async (id: number): Promise<Boat> => {
 }
 
 export type CreateBoatPayload = {
+  listingType: string
   stockNumber?: number
   condition: string
   status: number
@@ -39,11 +40,16 @@ export type CreateBoatPayload = {
   boatYear: number
   price: number
   currency: string
-  length: number
-  beamFt?: number
-  draftFt?: number
+  lengthFt: number
+  description: string
+  cityID: number
 
   // OPTIONAL but sendable
+  lengthIn?: number
+  beamFt?: number
+  beamIn?: number
+  draftFt?: number
+  draftIn?: number
   weight?: number
   engine?: string
   numEngines?: number
@@ -51,9 +57,6 @@ export type CreateBoatPayload = {
   drive?: string
   hours?: number
   fuelType?: string
-
-  description?: string
-  cityID: number
 }
 
 export async function createBoat(payload: CreateBoatPayload) {
