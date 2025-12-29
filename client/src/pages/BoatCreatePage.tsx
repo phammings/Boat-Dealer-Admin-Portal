@@ -100,8 +100,8 @@ export default function BoatCreatePage() {
         stockNumber: data.stockNumber,
         condition: data.condition,
         status: Number(data.status),
-        boatType: data.boatType,
-        classCode: data.classCode,
+        boatType: Number(data.boatType),
+        classCode: Number(data.classCode),
         make: data.make,
         model: data.model,
         boatYear: Number(data.boatYear),
@@ -358,8 +358,13 @@ export default function BoatCreatePage() {
 
               {/* MODEL */}
               <div>
-                <Label>Model</Label>
-                <Input {...register("model")} />
+                <RequiredLabel>Model</RequiredLabel>
+                <Input
+                  type="string"
+                  {...register("model", { required: "Model required" })}
+                  className={errors.model ? errorClass : ""}
+                />
+                <FieldError error={errors.model?.message as string} />
               </div>
 
               {/* YEAR */}

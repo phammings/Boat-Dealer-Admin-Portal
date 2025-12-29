@@ -36,7 +36,7 @@ export type CreateBoatPayload = {
   boatType: number
   classCode: number
   make: string
-  model?: string
+  model: string
   boatYear: number
   price: number
   currency: string
