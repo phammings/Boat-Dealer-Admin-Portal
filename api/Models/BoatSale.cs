@@ -21,10 +21,10 @@ namespace BoatAdminApi.Models
         public required string BoatType { get; set; }
 
         [MaxLength(50)]
-        public required string Make { get; set; }
+        public string? Make { get; set; }
 
         [MaxLength(50)]
-        public required string Model { get; set; }
+        public string? Model { get; set; }
 
         public required string Description { get; set; }
         public required int Length { get; set; }
@@ -79,7 +79,7 @@ namespace BoatAdminApi.Models
         public double? BoatLongitude { get; set; }
         public int OwnerUserId { get; set; }
         public bool? LocationChanged { get; set; }
-        public required int CityID { get; set; }
+        public int? CityID { get; set; }
         public decimal? SearchPrice { get; set; }
         public int PriceType { get; set; }
         public DateTime? LastModified { get; set; }

@@ -6,6 +6,7 @@ namespace BoatAdminApi.Repositories
     public interface IBoatRepository
     {
         Task<IEnumerable<BoatListDto>> GetBoatsByDealerAsync(int dealerId);
+        Task<IEnumerable<BoatListInactiveDto>> GetInactiveBoatsByDealerAsync(int dealerId);
         Task<BoatSale?> GetBoatByIdAsync(int dealerId, int boatId);
         Task<BoatSale> CreateBoatAsync(BoatSale boat);
         Task UpdateBoatAsync(BoatSale boat);

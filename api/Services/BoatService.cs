@@ -19,10 +19,16 @@ namespace BoatAdminApi.Services
             return _repo.GetBoatsByDealerAsync(dealerId);
         }
 
-        public async Task<BoatDTO?> GetBoatAsync(int dealerId, int boatId)
+        public Task<IEnumerable<BoatListInactiveDto>> GetInactiveBoatsAsync(int dealerId)
+        {
+            return _repo.GetInactiveBoatsByDealerAsync(dealerId);
+        }
+
+
+        public async Task<BoatDTO> GetBoatAsync(int dealerId, int boatId)
         {
             var boat = await _repo.GetBoatByIdAsync(dealerId, boatId);
-            if (boat == null) return null;
+            if (boat == null) return null!;
 
             // ---- Price handling ----
             decimal price = 0;
@@ -72,7 +78,7 @@ namespace BoatAdminApi.Services
                 FuelType = boat.FuelType?.ToString() ?? "N/A",
 
                 Description = boat.Description,
-                CityID = boat.CityID
+                CityID = (int)boat.CityID
             };
         }
 

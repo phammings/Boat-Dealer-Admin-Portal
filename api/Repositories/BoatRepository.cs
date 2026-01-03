@@ -42,6 +42,35 @@ namespace BoatAdminApi.Repositories
                           }).ToListAsync();
         }
 
+        public async Task<IEnumerable<BoatListInactiveDto>> GetInactiveBoatsByDealerAsync(int dealerId)
+{
+    return await (from bs in _context.BoatSales
+                  where bs.SellerID == dealerId && bs.Active == false
+                  join vc in _context.VehicleClasses
+                      on bs.ClassCode equals vc.Code into vcJoin
+                  from vc in vcJoin.DefaultIfEmpty()
+                  join cat in _context.VehicleCategories
+                      on vc.VehicleCategoryID equals cat.VehicleCategoryID into catJoin
+                  from cat in catJoin.DefaultIfEmpty()
+                  join city in _context.Cities
+                      on bs.CityID equals city.CityID into cityJoin
+                  from city in cityJoin.DefaultIfEmpty()
+                  orderby bs.LastModified descending
+                  select new BoatListInactiveDto
+                  {
+                      BoatID = bs.BoatID,
+                      Make = bs.Make,
+                      Model = bs.Model,
+                      BoatYear = bs.BoatYear,
+                      Status = bs.Status.ToString(),
+                      City = city != null ? city.Name : null,
+                      Category = cat != null ? cat.Name : null,
+                      Class = vc != null ? vc.Name : null,
+                      StockNumber = bs.StockNum
+                  }).ToListAsync();
+}
+
+
         public async Task<BoatSale?> GetBoatByIdAsync(int dealerId, int boatId)
         {
              return await _context.BoatSales

@@ -27,6 +27,17 @@ namespace BoatAdminApi.Controllers
             return Ok(boats);
         }
 
+        [HttpGet("inactive")]
+        public async Task<ActionResult<IEnumerable<BoatListInactiveDto>>> GetInactiveBoats()
+        {
+            int dealerId = DealerHelper.GetDealerId(Request);
+            if (dealerId == 0) return Unauthorized();
+
+            var boats = await _service.GetInactiveBoatsAsync(dealerId);
+            return Ok(boats);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult<BoatSale>> GetBoat(int id)
         {
