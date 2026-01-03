@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useLocation, useNavigate } from "react-router-dom"
 import {
   Card,
@@ -28,7 +28,7 @@ import {
   IconPencil,
 } from "@tabler/icons-react"
 
-import { createBoatVideo, updateBoatVideo, toggleBoatVideoStatus } from "../api/boats.api"
+import { createBoatVideo, updateBoatVideo, toggleBoatVideoStatus, getBoatVideos } from "../api/boats.api"
 
 export interface BoatVideo {
   id?: number
@@ -46,6 +46,9 @@ export default function BoatVideoUploadPage() {
     (location.state as { boatID?: number })?.boatID ?? Number(params.id)
   if (!boatID) return <div>Boat ID not found</div>
 
+  // ✅ EDIT MODE DETECTION
+  const isEditMode = location.pathname.startsWith("/edit/videos/")
+
   const [videos, setVideos] = useState<BoatVideo[]>([])
   const [adding, setAdding] = useState(false)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
@@ -58,6 +61,23 @@ export default function BoatVideoUploadPage() {
   })
 
   const isLocked = adding || editingIndex !== null
+
+  /* ---------------- Fetch existing videos in edit mode ---------------- */
+  useEffect(() => {
+    if (!isEditMode) return
+
+    const fetchVideos = async () => {
+      try {
+        const data = await getBoatVideos(boatID)
+        setVideos(data)
+      } catch (err) {
+        console.error(err)
+        toast.error("Failed to load existing videos")
+      }
+    }
+
+    fetchVideos()
+  }, [isEditMode, boatID])
 
   /* ---------------- Thumbnail Resolver ---------------- */
   const getThumbnail = async (url: string): Promise<string> => {
@@ -128,7 +148,9 @@ export default function BoatVideoUploadPage() {
 
   const removeVideo = async (index: number) => {
     const videoID = videos[index].id
-    if (videoID) {
+
+    // 🔥 EDIT MODE → soft delete via API
+    if (isEditMode && videoID) {
       setSaving(true)
       try {
         await toggleBoatVideoStatus(videoID, false)
@@ -139,10 +161,11 @@ export default function BoatVideoUploadPage() {
       } finally {
         setSaving(false)
       }
-    } else {
-      // Local row, just remove
-      setVideos(prev => prev.filter((_, i) => i !== index))
+      return
     }
+
+    // 🧹 CREATE MODE or unsaved row → local only
+    setVideos(prev => prev.filter((_, i) => i !== index))
   }
 
   /* ---------------- UI ---------------- */

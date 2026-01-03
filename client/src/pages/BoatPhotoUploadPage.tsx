@@ -226,7 +226,11 @@ export default function BoatPhotoUploadPage() {
       toast.error("Failed to upload photos");
     } finally {
       setUploading(false);
+      if (isEditMode){
+        navigate(`/edit/videos/${boatID}`, { state: { boatID } });
+      } else {
       navigate(`/create/videos/${boatID}`, { state: { boatID } });
+      }
     }
   };
 

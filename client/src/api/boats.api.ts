@@ -171,6 +171,6 @@ export const toggleBoatVideoStatus = async (videoID: number, active: boolean) =>
 export const getBoatVideos = async (
   boatID: number
 ) => {
-  const res = await api.get(`/api/boats/${boatID}/videos`)
+  const res = await api.get(`/api/boats/videos/${boatID}`)
   return res.data
 }
