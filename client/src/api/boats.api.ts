@@ -10,9 +10,26 @@ export const getBoats = async (): Promise<Boat[]> => {
   return res.data
 }
 
+export const getInactiveBoats = async (): Promise<Boat[]> => {
+  const res = await api.get<Boat[]>("/api/boats/inactive", {
+    headers: AUTH_HEADER,
+  })
+  return res.data
+}
+
 export const deleteBoat = async (id: number) => {
   await api.patch(
     `/api/boats/${id}/status?active=false`,
+    null, 
+    {
+      headers: AUTH_HEADER, 
+    }
+  )
+}
+
+export const restoreBoat = async (id: number) => {
+  await api.patch(
+    `/api/boats/${id}/status?active=true`,
     null, 
     {
       headers: AUTH_HEADER, 

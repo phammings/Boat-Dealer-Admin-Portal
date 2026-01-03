@@ -44,14 +44,26 @@ export default function BoatsPage() {
         <h1 className="text-2xl font-bold leading-none">
           Boats
         </h1>
-        <Button
-          variant="default"
-          className="bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center gap-2 py-2 px-4"
-          onClick={() => navigate("/create/details")}
-        >
-          <span>Create Boat</span>
-          <IconPlus size={18} />
-        </Button>
+        <div className="flex gap-2 ml-auto">
+    {/* Deleted Listings button */}
+    <Button
+      variant="outline"
+      className="bg-red-600 text-white hover:bg-red-700 flex items-center justify-center gap-2 py-2 px-4"
+      onClick={() => navigate("/boats/deleted")}
+    >
+      View Deleted Listings
+    </Button>
+
+    {/* Create Boat button */}
+    <Button
+      variant="default"
+      className="bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center gap-2 py-2 px-4"
+      onClick={() => navigate("/create/details")}
+    >
+      <span>Create Boat</span>
+      <IconPlus size={18} />
+    </Button>
+  </div>
       </div>
 
       {/* Table */}
