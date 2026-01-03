@@ -146,6 +146,31 @@ export const updateBoatVideo = async (videoID: number, payload: BoatVideoPayload
   return data
 }
 
+export const getBoatPhotos = async (boatID: number) => {
+  const res = await api.get(`/api/boats/photos/${boatID}`)
+  return res.data
+}
+
+export const updateBoatPhoto = async (
+  photoId: number,
+  payload: {
+    photoTitle?: string | null
+    photoDescription?: string | null
+    isPrimary: boolean
+    active?: boolean
+  }
+) => {
+  return api.put(`/api/boats/photos/${photoId}`, payload)
+}
+
+
 export const toggleBoatVideoStatus = async (videoID: number, active: boolean) => {
   await api.patch(`/api/boats/videos/${videoID}/status?active=${active}`, null, { headers: AUTH_HEADER })
+}
+
+export const getBoatVideos = async (
+  boatID: number
+) => {
+  const res = await api.get(`/api/boats/${boatID}/videos`)
+  return res.data
 }

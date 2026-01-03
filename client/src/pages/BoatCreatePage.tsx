@@ -23,7 +23,7 @@ import { BoatStatus } from "../enums/enums"
 import { BoatFormStepper } from "@/components/BoatFormStepper"
 import { FieldError, RequiredLabel } from "@/components/Errors"
 import { GridSkeleton } from "@/components/Skeletons"
-// import CityAutocomplete from "@/components/CityAutocomplete"
+import CityAutocomplete from "@/components/CityAutocomplete"
 
 /* ---------------- helpers ---------------- */
 
@@ -53,6 +53,7 @@ export default function BoatCreatePage() {
     control,
     register,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     shouldFocusError: true,
@@ -137,7 +138,7 @@ useEffect(() => {
           hp: data.hp ? Number(data.hp) : undefined,
         })
         toast.success("Boat updated successfully")
-        navigate(`/boats/${boatID}`)
+        navigate(`/edit/photos/${boatID}`)
         } else {
         const createdBoat = await createBoat({
             listingType: data.listingType,
@@ -752,13 +753,14 @@ useEffect(() => {
 
 
           {/* Location */}
-        {/* <section>
+        <section>
         <h3 className="font-semibold mb-4">Location</h3>
         <Separator />
         <div className="grid md:grid-cols-3 gap-4 pt-6">
             <CityAutocomplete control={control} setValue={setValue} errors={errors} />
         </div>
-        </section> */}
+        </section>
+        {/* </section>
           <section>
             <h3 className="font-semibold mb-4">Location</h3>
             <Separator />
@@ -778,7 +780,7 @@ useEffect(() => {
                     </div>
                 </div>
                 )}
-          </section>
+          </section> */}
 
           {/* Description */}
           <section>
@@ -825,3 +827,4 @@ useEffect(() => {
 )
 
 }
+
