@@ -79,6 +79,7 @@ public class BoatPhotoService : IBoatPhotoService
         photo.PhotoTitle = dto.PhotoTitle;
         photo.PhotoDescription = dto.PhotoDescription;
         photo.IsPrimary = dto.IsPrimary;
+        photo.Active = dto.Active;
 
         await _repo.UpdateAsync(photo);
     }

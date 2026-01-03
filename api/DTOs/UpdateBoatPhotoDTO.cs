@@ -5,5 +5,6 @@ namespace BoatAdminApi.DTOs
         public string? PhotoTitle { get; set; }
         public string? PhotoDescription { get; set; }
         public bool IsPrimary { get; set; }
+        public bool Active { get; set; }
     }
 }

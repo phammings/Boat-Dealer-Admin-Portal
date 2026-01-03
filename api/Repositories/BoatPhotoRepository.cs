@@ -42,7 +42,7 @@ public class BoatPhotoRepository : IBoatPhotoRepository
         return await _context.BoatPhotos
             .Where(p =>
                 p.BoatID == boatId &&
-                p.Active &&
+                p.Active == true &&
                 !p.Hide)
             .ToListAsync();
     }
