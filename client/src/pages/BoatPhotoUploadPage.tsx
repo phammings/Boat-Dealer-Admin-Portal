@@ -15,7 +15,6 @@ interface UploadedPhoto {
   isPrimary: boolean;
   s3Key?: string;
 
-  // ✅ REQUIRED FOR EDIT MODE
   boatPhotoID?: number;
   isExisting?: boolean;
 }
@@ -31,13 +30,11 @@ export default function BoatPhotoUploadPage() {
 
   if (!boatID) return <div>Boat ID not found!</div>;
 
-  // ✅ EDIT MODE DETECTION
   const isEditMode = location.pathname.startsWith("/edit/photos/");
 
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
 
-  // ✅ FETCH EXISTING BOAT PHOTOS IN EDIT MODE
   useEffect(() => {
     if (!isEditMode) return;
 
@@ -69,26 +66,78 @@ export default function BoatPhotoUploadPage() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [] },
     onDrop: (acceptedFiles) => {
-      const newFiles = acceptedFiles.map((file) => ({
+    setPhotos((prev) => {
+      const hasPrimary = prev.some((p) => p.isPrimary);
+
+      const newFiles = acceptedFiles.map((file, index) => ({
         file,
         preview: URL.createObjectURL(file),
-        isPrimary: photos.length === 0,
+        isPrimary: !hasPrimary && index === 0,
       }));
-      setPhotos((prev) => [...prev, ...newFiles]);
-    },
+
+      return [...prev, ...newFiles];
+    });
+  },
   });
 
-  const handleSetPrimary = (index: number) => {
-    setPhotos((prev) =>
-      prev.map((p, i) => ({ ...p, isPrimary: i === index }))
+  const handleSetPrimary = async (index: number) => {
+    const selectedPhoto = photos[index];
+
+    if (
+      !isEditMode ||
+      !selectedPhoto.isExisting ||
+      !selectedPhoto.boatPhotoID
+    ) {
+      // UI-only behavior for create mode
+      setPhotos((prev) =>
+        prev.map((p, i) => ({ ...p, isPrimary: i === index }))
+      );
+      return;
+    }
+
+    try {
+      const currentPrimary = photos.find(
+      (p) => p.isPrimary && p.boatPhotoID !== undefined
     );
+
+    // Unset old primary
+    if (
+      currentPrimary &&
+      currentPrimary.boatPhotoID !== undefined &&
+      currentPrimary.boatPhotoID !== selectedPhoto.boatPhotoID
+    ) {
+      await updateBoatPhoto(currentPrimary.boatPhotoID, {
+        photoTitle: null,
+        photoDescription: null,
+        isPrimary: false,
+        active: true,
+      });
+    }
+
+
+      // Set new primary
+      await updateBoatPhoto(selectedPhoto.boatPhotoID, {
+        photoTitle: null,
+        photoDescription: null,
+        isPrimary: true,
+        active: true,
+      });
+
+      setPhotos((prev) =>
+        prev.map((p, i) => ({ ...p, isPrimary: i === index }))
+      );
+
+      toast.success("Primary photo updated");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update primary photo");
+    }
   };
 
-  // ✅ PUT REQUEST FIRES IMMEDIATELY ON DELETE
+  // PUT REQUEST FIRES IMMEDIATELY ON DELETE
   const handleRemove = async (index: number) => {
     const photoToRemove = photos[index];
 
-    // 🔥 IMMEDIATE BACKEND UPDATE
     if (isEditMode && photoToRemove.isExisting && photoToRemove.boatPhotoID) {
       try {
         await updateBoatPhoto(photoToRemove.boatPhotoID, {
@@ -97,7 +146,7 @@ export default function BoatPhotoUploadPage() {
           isPrimary: false,
           active: false,
         });
-        toast.success("Photos deleted successfully.")
+        toast.success("Photo deleted successfully.");
       } catch (err) {
         console.error(err);
         toast.error("Failed to delete photo");
@@ -117,11 +166,43 @@ export default function BoatPhotoUploadPage() {
     });
   };
 
+  const handleClear = async () => {
+  // EDIT MODE → soft delete all existing photos
+  if (isEditMode) {
+    const existingPhotos = photos.filter(
+      (p) => p.isExisting && p.boatPhotoID
+    );
+
+    try {
+      await Promise.all(
+        existingPhotos.map((photo) =>
+          updateBoatPhoto(photo.boatPhotoID!, {
+            photoTitle: null,
+            photoDescription: null,
+            isPrimary: false,
+            active: false,
+          })
+        )
+      );
+
+      toast.success("All photos deleted successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete all photos");
+      return;
+    }
+  }
+
+  // Clear UI state (both modes)
+  setPhotos([]);
+};
+
+
   const handleUpload = async () => {
     setUploading(true);
     try {
       for (const photo of photos) {
-        // ✅ Skip existing S3 photos in edit mode
+        // Skip existing S3 photos in edit mode
         if (isEditMode && photo.isExisting) continue;
 
         const presigned = await getPresignedUpload({
@@ -179,7 +260,7 @@ export default function BoatPhotoUploadPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setPhotos([])}
+                onClick={() => {setPhotos([]); handleClear();}}
               >
                 Clear
               </Button>
