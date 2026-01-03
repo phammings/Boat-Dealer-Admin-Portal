@@ -53,12 +53,37 @@ export default function BoatCreatePage() {
     control,
     register,
     reset,
+    watch,
     setValue,
     formState: { errors },
   } = useForm({
     shouldFocusError: true,
     mode: "onSubmit"
   })
+
+const watchedBoatType = watch("boatType");
+
+useEffect(() => {
+    if (boatID) return;
+  async function fetchClasses() {
+    if (!watchedBoatType) {
+      setClasses([]);
+      setValue("classCode", "");
+      return;
+    }
+
+    try {
+      const classData = await getClassesByCategory(Number(watchedBoatType));
+      setClasses(classData);
+      setValue("classCode", ""); // reset class whenever type changes
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load classes for selected boat type");
+    }
+  }
+
+  fetchClasses();
+}, [watchedBoatType, setValue]);
 
 // Load everything in one place
 useEffect(() => {
@@ -372,10 +397,10 @@ useEffect(() => {
                   render={({ field }) => (
                     <>
                       <Select
-                        value={field.value}
+                        value={field.value || ""}
                         onValueChange={field.onChange}
-                        disabled={!classes.length}
-                      >
+                        disabled={classes.length === 0}
+                        >
                         <SelectTrigger
                           className={`${selectClass} ${
                             errors.classCode ? errorClass : ""
