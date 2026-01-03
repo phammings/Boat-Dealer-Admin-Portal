@@ -17,6 +17,8 @@ export default function App() {
         <Route path="/create/photos/:id" element={<BoatPhotoUploadPage />} />
         <Route path="/create/videos/:id" element={<BoatVideoUploadPage />} />
         <Route path="/edit/details/:id" element={<BoatCreatePage />} />
+        <Route path="/edit/photos/:id" element={<BoatPhotoUploadPage />} />
+        <Route path="/edit/videos/:id" element={<BoatVideoUploadPage />} />
       </Routes>
     </BrowserRouter>
   );
