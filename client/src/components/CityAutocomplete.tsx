@@ -1,36 +1,36 @@
-// CityAutocomplete.tsx
 import { useState } from "react"
 import { Controller } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-toastify"
-import axios from "axios"
+import { fetchCities } from "@/api/lookup.api"
+import type { CityOption } from "@/api/lookup.api"
 
-interface CityOption {
-  label: string
-  value: number
-}
-
-export default function CityAutocomplete({ control, setValue, errors }: any) {
+export default function CityAutocomplete({ control, errors }: any) {
   const [options, setOptions] = useState<CityOption[]>([])
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const fetchCities = async (text: string) => {
+  const loadCities = async (text: string) => {
     try {
-        const res = await axios.post("http://devp.mydealers.ca/location/find", { location: text })
-        setOptions(res.data) // array of { label, value }
-    } catch (err) {
-        toast.error("Failed to fetch cities")
+      setLoading(true)
+      const data = await fetchCities(text)
+      setOptions(data)
+      setOpen(true)
+    } catch {
+      toast.error("Failed to fetch cities")
+      setOptions([])
+    } finally {
+      setLoading(false)
     }
- }
-
+  }
 
   const handleInputChange = (value: string) => {
     setQuery(value)
+
     if (value.length >= 3) {
-      fetchCities(value)
-      setOpen(true)
+      loadCities(value)
     } else {
       setOptions([])
       setOpen(false)
@@ -42,6 +42,7 @@ export default function CityAutocomplete({ control, setValue, errors }: any) {
       <Label>
         City <span className="text-red-500">*</span>
       </Label>
+
       <Controller
         name="cityID"
         control={control}
@@ -53,28 +54,52 @@ export default function CityAutocomplete({ control, setValue, errors }: any) {
               onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Start typing city..."
             />
-            {open && options.length > 0 && (
+
+            {open && (
               <ul className="absolute z-10 w-full bg-white border rounded shadow max-h-60 overflow-y-auto">
-                {options.map((option) => (
-                  <li
-                    key={option.value}
-                    className="px-3 py-2 cursor-pointer hover:bg-gray-100"
-                    onClick={() => {
-                      setQuery(option.label)
-                      field.onChange(option.value) // store CityID
-                      setOpen(false)
-                    }}
-                  >
-                    {option.label}
+                {loading && (
+                  <>
+                    {[...Array(3)].map((_, i) => (
+                      <li
+                        key={i}
+                        className="px-3 py-2 animate-pulse bg-gray-100"
+                      >
+                        &nbsp;
+                      </li>
+                    ))}
+                  </>
+                )}
+
+                {!loading &&
+                  options.map((option) => (
+                    <li
+                      key={option.value}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        setQuery(option.label)
+                        field.onChange(option.value)
+                        setOpen(false)
+                      }}
+                    >
+                      {option.label}
+                    </li>
+                  ))}
+
+                {!loading && options.length === 0 && (
+                  <li className="px-3 py-2 text-gray-400">
+                    No results
                   </li>
-                ))}
+                )}
               </ul>
             )}
           </div>
         )}
       />
+
       {errors.cityID && (
-        <p className="text-red-500 text-sm mt-1">{errors.cityID.message}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors.cityID.message}
+        </p>
       )}
     </div>
   )

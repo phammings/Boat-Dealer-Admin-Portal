@@ -2,16 +2,16 @@ export const ListingType = ["Dealer", "Broker"] as const;
 export type ListingType = (typeof ListingType)[number];
 
 export const BoatStatus = [
-  "InStock",
-  "ComingSoon",
-  "DealPending",
+  "In Stock",
+  "Coming Soon",
+  "Deal Pending",
   "Incoming",
-  "IncomingDealPending",
-  "OnOrder",
-  "OutOfStock",
+  "Incoming Deal Pending",
+  "On Order",
+  "Out Of Stock",
   "Sold",
   "Unavailable",
-  "UnderDeposit",
+  "Under Deposit",
 ] as const;
 export type BoatStatus = (typeof BoatStatus)[number];
 
@@ -19,8 +19,8 @@ export const Condition = ["New", "Used"] as const;
 export type Condition = (typeof Condition)[number];
 
 export const DriveType = [
-  "NoEngine",
-  "InboardOutboard",
+  "No Engine",
+  "Inboard Outboard",
   "Inboard",
   "Outboard",
   "Jet",
