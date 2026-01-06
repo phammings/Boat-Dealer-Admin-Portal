@@ -6,10 +6,10 @@ Admin portal for managing boat listings, including creation, editing, deletion, 
 
 ## Project Structure
 
-/client            # Frontend (React + Vite)
-/api               # Backend (ASP.NET Core)
-/postman           # Postman collection for API testing
-README.md
+- /client            # Frontend (React + Vite)
+- /api               # Backend (ASP.NET Core)
+- /postman           # Postman collection for API testing
+- README.md
 
 ---
 
@@ -28,10 +28,7 @@ bun -v
 > Using a different Node version may cause dependency or Vite issues.
 
 ### .NET
-- .NET SDK: net10.0 (preview)
-
-Verify:
-dotnet --version
+- .NET SDK: net10.0.100
 
 ---
 
@@ -95,12 +92,7 @@ Import the collection into Postman to test:
 ## Common Issues / Checks
 
 ### API fails with authentication error
-- Ensure [AllowAnonymous] is applied to lookup endpoints
-- Verify authentication middleware configuration
-
-### City autocomplete not populating on edit
-- Confirm /api/cities/{id} returns data
-- Ensure cityID is set during form reset
+- Ensures Header contains 'Bearer 7'
 
 ### Port conflicts
 - Frontend: 5173
@@ -124,5 +116,3 @@ Once both services are running:
 1. Start backend (dotnet run)
 2. Start frontend (bun run dev)
 3. Open browser and begin managing listings
-
-Happy building 🚤
