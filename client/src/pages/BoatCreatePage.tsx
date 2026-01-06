@@ -782,30 +782,14 @@ useEffect(() => {
         <h3 className="font-semibold mb-4">Location</h3>
         <Separator />
         <div className="grid md:grid-cols-3 gap-4 pt-6">
-            <CityAutocomplete control={control} setValue={setValue} errors={errors} />
+            <CityAutocomplete
+              control={control}
+              errors={errors}
+              defaultCityId={watch("cityID")}
+            />
+
         </div>
         </section>
-        {/* </section>
-          <section>
-            <h3 className="font-semibold mb-4">Location</h3>
-            <Separator />
-            {initialLoading ? (
-                <GridSkeleton count={1} />
-                ) : (
-                <div className="grid md:grid-cols-3 gap-4 pt-6">
-                    <div>
-                    <RequiredLabel>City</RequiredLabel>
-                    <Input
-                        type="number"
-                        {...register("cityID", { required: "City required" })}
-                        className={errors.cityID ? errorClass : ""}
-                        disabled={initialLoading}
-                    />
-                    <FieldError error={errors.cityID?.message as string} />
-                    </div>
-                </div>
-                )}
-          </section> */}
 
           {/* Description */}
           <section>

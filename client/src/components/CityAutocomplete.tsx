@@ -1,17 +1,56 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Controller } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-toastify"
-import { fetchCities } from "@/api/lookup.api"
+import {
+  fetchCities,
+  fetchCityById,
+} from "@/api/lookup.api"
 import type { CityOption } from "@/api/lookup.api"
 
-export default function CityAutocomplete({ control, errors }: any) {
+interface Props {
+  control: any
+  errors: any
+  defaultCityId?: number | null // 👈 for edit mode
+}
+
+export default function CityAutocomplete({
+  control,
+  errors,
+  defaultCityId,
+}: Props) {
   const [options, setOptions] = useState<CityOption[]>([])
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
 
+  /* ---------------------------------------------
+   * EDIT MODE: hydrate label from CityID
+   * -------------------------------------------- */
+  useEffect(() => {
+    if (!defaultCityId || hydrated) return
+
+    const loadCity = async () => {
+      try {
+        setLoading(true)
+        const city = await fetchCityById(defaultCityId)
+        setQuery(city.label)
+        setHydrated(true)
+      } catch {
+        toast.error("Failed to load city")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadCity()
+  }, [defaultCityId, hydrated])
+
+  /* ---------------------------------------------
+   * SEARCH
+   * -------------------------------------------- */
   const loadCities = async (text: string) => {
     try {
       setLoading(true)

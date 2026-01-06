@@ -33,5 +33,10 @@ export const fetchCities = async (text: string): Promise<CityOption[]> => {
   return res.data
 }
 
+export const fetchCityById = async (id: number): Promise<CityOption> => {
+  const res = await api.get<CityOption>(`/api/cities/${id}`)
+  return res.data
+}
+
 
 
