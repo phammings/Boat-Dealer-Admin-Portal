@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "1401f61c-797b-4471-94ae-a6af9248e039",
+		"name": "boats photo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42789068",
+		"_collection_link": "https://boat-dealer-admin-team.postman.co/workspace/Boat-Admin-Portal~152bd951-62ed-4b47-9f64-771126934c09/collection/42789068-1401f61c-797b-4471-94ae-a6af9248e039?action=share&source=collection_link&creator=42789068"
+	},
+	"item": [
+		{
+			"name": "upload photo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"boatID\": 402577,\r\n  \"fileName\": \"boat.png\",\r\n  \"contentType\": \"boat/png\",\r\n  \"isPrimary\": true\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats/photos/presigned-upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"photos",
+						"presigned-upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get boat by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5299/api/boats/photos/359958",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"photos",
+						"359958"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": 0,\r\n  \"boatType\": \"Sail\",\r\n  \"classCode\": \"SAIL\",\r\n  \"make\": \"Beneteau\",\r\n  \"model\": \"Oceanis 38\",\r\n  \"boatYear\": 2017,\r\n  \"price\": 120000,\r\n  \"length\": 38,\r\n  \"beamFt\": 12,\r\n  \"draftFt\": 5,\r\n  \"weight\": 17000,\r\n  \"engine\": \"YANMAR\",\r\n  \"numEngines\": 1,\r\n  \"hp\": 40,\r\n  \"drive\": \"Inboard\",\r\n  \"hours\": 350,\r\n  \"fuelType\": \"Diesel\",\r\n  \"description\": \"Very clean sailboat.\",\r\n  \"cityID\": 55,\r\n  \"sellerID\": 734\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": 0,\r\n  \"boatType\": \"Sail\",\r\n  \"classCode\": \"SAIL\",\r\n  \"make\": \"Beneteau\",\r\n  \"model\": \"Oceanis 38\",\r\n  \"boatYear\": 2017,\r\n  \"price\": 120000,\r\n  \"length\": 38,\r\n  \"beamFt\": 12,\r\n  \"draftFt\": 5,\r\n  \"weight\": 17000,\r\n  \"engine\": \"YANMAR\",\r\n  \"numEngines\": 1,\r\n  \"hp\": 40,\r\n  \"drive\": \"Inboard\",\r\n  \"hours\": 350,\r\n  \"fuelType\": \"Diesel\",\r\n  \"description\": \"Very clean sailboat.\",\r\n  \"cityID\": 55,\r\n  \"sellerID\": 734\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"status\": 0,\r\n  \"boatType\": \"Sail\",\r\n  \"classCode\": \"SAIL\",\r\n  \"make\": \"Beneteau\",\r\n  \"model\": \"Oceanis 38\",\r\n  \"boatYear\": 2017,\r\n  \"price\": 120000,\r\n  \"length\": 38,\r\n  \"beamFt\": 12,\r\n  \"draftFt\": 5,\r\n  \"weight\": 17000,\r\n  \"engine\": \"YANMAR\",\r\n  \"numEngines\": 1,\r\n  \"hp\": 40,\r\n  \"drive\": \"Inboard\",\r\n  \"hours\": 350,\r\n  \"fuelType\": \"Diesel\",\r\n  \"description\": \"Very clean sailboat.\",\r\n  \"cityID\": 55,\r\n  \"sellerID\": 734\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "s3 upload",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "image/png",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {}
+				},
+				"url": {
+					"raw": "https://devboatphoto.s3.us-east-1.amazonaws.com/402579/12180817/front-view.jpg?X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA4NHAVXXYGS24VREF%2F20251214%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251214T144625Z&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=dcbdc76df4ccfca64141e16291b799d8870334bcc1c687ee8639f5237d95bf80",
+					"protocol": "https",
+					"host": [
+						"devboatphoto",
+						"s3",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"402579",
+						"12180817",
+						"front-view.jpg"
+					],
+					"query": [
+						{
+							"key": "X-Amz-Expires",
+							"value": "300"
+						},
+						{
+							"key": "X-Amz-Algorithm",
+							"value": "AWS4-HMAC-SHA256"
+						},
+						{
+							"key": "X-Amz-Credential",
+							"value": "AKIA4NHAVXXYGS24VREF%2F20251214%2Fus-east-1%2Fs3%2Faws4_request"
+						},
+						{
+							"key": "X-Amz-Date",
+							"value": "20251214T144625Z"
+						},
+						{
+							"key": "X-Amz-SignedHeaders",
+							"value": "content-type%3Bhost"
+						},
+						{
+							"key": "X-Amz-Signature",
+							"value": "dcbdc76df4ccfca64141e16291b799d8870334bcc1c687ee8639f5237d95bf80"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

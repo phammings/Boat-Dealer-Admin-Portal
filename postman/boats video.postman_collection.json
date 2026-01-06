@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "5828505d-9478-4b32-9cd3-c6aca764ded1",
+		"name": "boats video",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42789068",
+		"_collection_link": "https://boat-dealer-admin-team.postman.co/workspace/Boat-Admin-Portal~152bd951-62ed-4b47-9f64-771126934c09/collection/42789068-5828505d-9478-4b32-9cd3-c6aca764ded1?action=share&source=collection_link&creator=42789068"
+	},
+	"item": [
+		{
+			"name": "list boats",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5299/api/boats/videos/402577",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"videos",
+						"402577"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get boat by id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5299/api/boats/videos/video/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"videos",
+						"video",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\": \"test\",\r\n    \"title\": \"testing\",\r\n    \"url\": \"https://vimeo.com/402577\",\r\n    \"active\": false,\r\n    \"hide\": false,\r\n    \"srcType\": 0,\r\n    \"boat_VehicleID\": 402577,\r\n    \"imageUrl\": \"http://i.vimeocdn.com/video/836716295_640.jpg\",\r\n    \"priority\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats/videos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"videos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":789,\r\n    \"title\":\"Updated title\",\r\n    \"description\":\"Updated description\",\r\n    \"url\":\"https://vimeo.com/402577\",\r\n    \"srcType\":0,\r\n    \"imageUrl\":\"http://i.vimeocdn.com/video/836716295_640.jpg\",\r\n    \"priority\":1,\r\n    \"active\":true,\r\n    \"hide\":false\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats/videos/789",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"videos",
+						"789"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boat",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":789,\r\n    \"active\":true\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5299/api/boats/videos/789/status?active=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5299",
+					"path": [
+						"api",
+						"boats",
+						"videos",
+						"789",
+						"status"
+					],
+					"query": [
+						{
+							"key": "active",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
